@@ -5,9 +5,14 @@ import aws_cdk as cdk
 
 from comp4600_final.comp4600_final_stack import Comp4600FinalStack
 
-
+CDK_DEFAULT_ACCOUNT = "620339869704"
+CDK_DEFAULT_REGION = "us-east-1"
 app = cdk.App()
 Comp4600FinalStack(app, "Comp4600FinalStack",
+    env=cdk.Environment(
+        account=CDK_DEFAULT_ACCOUNT,
+        region=CDK_DEFAULT_REGION
+    )
     # If you don't specify 'env', this stack will be environment-agnostic.
     # Account/Region-dependent features and context lookups will not work,
     # but a single synthesized template can be deployed anywhere.
