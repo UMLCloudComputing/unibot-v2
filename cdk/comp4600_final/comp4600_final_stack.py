@@ -12,9 +12,11 @@ from constructs import Construct
 from collections.abc import Mapping
 import json
 import os
+import yaml
 
 DEFAULT_VPC_ID = "vpc-01169b0ddb2a2f86b"
 RESOURCE_PREFIX = "unibot-"
+
 class Comp4600FinalStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -24,8 +26,7 @@ class Comp4600FinalStack(Stack):
             self,
             RESOURCE_PREFIX + "vpc"
         )
-
-
+         
         # IAM STUFF
         eks_assume_role_policy_json = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "./policies/eks_assume_role.json"), "r"))
         eks_cluster_role = iam.Role(
@@ -42,5 +43,11 @@ class Comp4600FinalStack(Stack):
             kubectl_layer=KubectlV33Layer(self, "kubectl"),
             vpc=vpc
         )
-
+        
+        # Load and add Ramalama Kubernetes Manifest to cluster
+        with open('../../manifest.yaml') as manifest_file:
+            manifest = yaml.safe_load(manifest_file)
+        
+        cluster.add_manifest("Ramalama Manifest", manifest) 
+    
         cluster.add_nodegroup_capacity("")
