@@ -7,8 +7,7 @@
                 "Service": "eks.amazonaws.com"
             },
             "Action": [
-                "sts:AssumeRole",
-                "sts:TagSession"
+                "sts:AssumeRole"
             ]
         }
     ]

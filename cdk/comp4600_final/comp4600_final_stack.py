@@ -22,22 +22,19 @@ class Comp4600FinalStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         # VPC
-        vpc = ec2.Vpc.from_lookup(
+        vpc = ec2.Vpc(
             self,
-            id=DEFAULT_VPC_ID,
-            is_default=True
+            RESOURCE_PREFIX + "vpc"
         )
          
-
-        # IAM 
+        # IAM STUFF
         eks_assume_role_policy_json = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "./policies/eks_assume_role.json"), "r"))
-        eks_auto_node_role = iam.Role(
+        eks_cluster_role = iam.Role(
             self,
             id=RESOURCE_PREFIX + "eks_auto_node_role",
             assumed_by = iam.ServicePrincipal("eks.amazonaws.com")
         )
-        eks_auto_node_role.assume_role_policy.from_json(eks_assume_role_policy_json)
-        
+        eks_cluster_role.assume_role_policy.from_json(eks_assume_role_policy_json)
         
         # EKS Cluster
         cluster = eks.Cluster(self, RESOURCE_PREFIX + "cluster",
