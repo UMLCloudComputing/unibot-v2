@@ -10,10 +10,11 @@ The model and RAG DB management is performed using containers as the underlying 
 - [Ramalama](https://github.com/containers/ramalama)
 - Retrieval Augmentation Generated
 - AWS EKS 
-- AWS ECS OCI Compliant Registry
+- AWS ECR OCI Compliant Registry
+- AWS CDK
 
 ## 🗫 Members
 - Gurpreet Singh
 - Nick Bottari
 - Roshan Rajesh
-- Nico
+- Nicolas Busse
