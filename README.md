@@ -8,7 +8,7 @@ The model and RAG DB management is performed using containers as the underlying 
 
 ## 👨‍💻 Technologies
 - [Ramalama](https://github.com/containers/ramalama)
-- [Retrieval Augmentation Generated](https://en.wikipedia.org/wiki/Retrieval-augmented_generation)
+- [Retrieval Augmentation Generation](https://en.wikipedia.org/wiki/Retrieval-augmented_generation)
 - [AWS EKS](https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html)
 - [AWS ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html) OCI Compliant Registry
 - [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/home.html)
