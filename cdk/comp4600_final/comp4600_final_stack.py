@@ -26,7 +26,7 @@ class Comp4600FinalStack(Stack):
             self,
             RESOURCE_PREFIX + "vpc"
         )
-         
+
         # IAM STUFF
         eks_assume_role_policy_json = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "./policies/eks_assume_role.json"), "r"))
         eks_cluster_role = iam.Role(
