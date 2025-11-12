@@ -6,6 +6,7 @@ from aws_cdk import (
     aws_eks as eks,
     aws_ec2 as ec2,
     aws_iam as iam,
+    aws_s3 as s3
 )
 from aws_cdk.lambda_layer_kubectl_v33 import KubectlV33Layer
 from constructs import Construct
@@ -15,7 +16,7 @@ import os
 import yaml
 
 DEFAULT_VPC_ID = "vpc-01169b0ddb2a2f86b"
-RESOURCE_PREFIX = "unibot-"
+RESOURCE_PREFIX = "gcp-"
 
 class Comp4600FinalStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
@@ -51,3 +52,4 @@ class Comp4600FinalStack(Stack):
         cluster.add_manifest("Ramalama Manifest", manifest) 
     
         cluster.add_nodegroup_capacity("")
+
