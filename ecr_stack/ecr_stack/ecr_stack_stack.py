@@ -56,9 +56,9 @@ class EcrStackStack(Stack):
             managed_policies=[
                 iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSLambdaBasicExecutionRole")
             ],
-            inline_policies=[
-                data_download_function_policy_doc
-            ]
+            inline_policies={
+                "Data-Download-Function-Policy": data_download_function_policy_doc
+            }
         )
         
         # Data Downloading Lambda
@@ -78,7 +78,7 @@ class EcrStackStack(Stack):
             statements=[
                 iam.PolicyStatement(
                     actions=["s3:GetObject", "ecr:PutImage"],
-                    resources=[html_data_bucket.bucket_arn, repo.repository_arn],
+                    resources=[html_data_bucket.bucket_arn, repo.repository_arn ],
                     effect=iam.Effect.ALLOW
                 )
             ]
@@ -89,9 +89,9 @@ class EcrStackStack(Stack):
             "Vectorization-Function-Exec-Role",
             role_name= RESOURCE_PREFIX + "vectorization-func-exec-role",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
-            inline_policies=[
-                vectorization_function_policy_doc
-            ]
+            inline_policies={
+                "Vectorization-Function-Policy": vectorization_function_policy_doc
+            }
         )
         # Vectorization function
         vectorization_lambda = _lambda.Function(
