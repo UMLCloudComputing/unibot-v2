@@ -1,0 +1,45 @@
+name: Destroy ECR Stack
+run-name: ${{ github.actor }} is destroying the ECR stack
+on:
+  #   push:
+  #     branches:
+  #       - main
+  workflow_dispatch
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  destroy-cdk-stack:
+    name: Destroy CDK stack
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          cd ecr_stack
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+          npm install -g aws-cdk
+
+      - name: Login to AWS
+        uses: aws-actions/configure-aws-credentials@main
+        with:
+          role-to-assume: arn:aws:iam::620339869704:role/gcp-github-oidc-trust-policy
+          aws-region: us-east-1
+
+      - name: CDK Destroy
+        shell: bash
+        run: |
+          cd ecr_stack
+          source .venv/bin/activate
+          cdk destroy --require-approval never
