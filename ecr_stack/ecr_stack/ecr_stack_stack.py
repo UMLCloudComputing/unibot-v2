@@ -31,7 +31,7 @@ class EcrStackStack(Stack):
         html_data_bucket = s3.Bucket(
             self,
             "html_data_bucket",
-            bucket_name= RESOURCE_PREFIX + "html_data_bucket",
+            bucket_name= RESOURCE_PREFIX + "html-data-bucket",
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
         )
