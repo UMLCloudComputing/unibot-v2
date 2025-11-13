@@ -22,7 +22,8 @@ class EcrStackStack(Stack):
             self,
             "OCI-Repository",
             repository_name= RESOURCE_PREFIX + "repository",
-            removal_policy=RemovalPolicy.DESTROY
+            removal_policy=RemovalPolicy.DESTROY,
+            
         )
 
         # S3 bucket
@@ -41,7 +42,7 @@ class EcrStackStack(Stack):
             statements=[
                 iam.PolicyStatement(
                     actions=["s3:GetObject", "s3:PutObject"],
-                    resources=[html_data_bucket._get_resource_arn_attribute()],
+                    resources=[html_data_bucket.bucket_arn],
                     effect=iam.Effect.ALLOW
                 )
             ]
@@ -77,7 +78,7 @@ class EcrStackStack(Stack):
             statements=[
                 iam.PolicyStatement(
                     actions=["s3:GetObject", "ecr:PutImage"],
-                    resources=[html_data_bucket._get_resource_arn_attribute(), repo._get_resource_arn_attribute()],
+                    resources=[html_data_bucket.bucket_arn, repo.repository_arn],
                     effect=iam.Effect.ALLOW
                 )
             ]
