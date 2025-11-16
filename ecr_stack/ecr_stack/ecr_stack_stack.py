@@ -15,22 +15,13 @@ from aws_cdk import (
 from constructs import Construct
 import os
 
-RESOURCE_PREFIX = "gcp-ecr-stack-"
-
 class EcrStackStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         
-
-        repo = ecr.Repository(
-            self,
-            "OCI-Repository",
-            repository_name= RESOURCE_PREFIX + "repository",
-            removal_policy=RemovalPolicy.DESTROY,
-            
-        )
+        
 
         # S3 bucket
         # This will store raw HTML files that are to be vectorized
