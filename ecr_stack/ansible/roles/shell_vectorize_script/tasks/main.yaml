@@ -1,0 +1,15 @@
+--- 
+- name: Copy local shell script to EC2
+  copy:
+    src: files/vectorize.sh
+    dest: /tmp/vectorize.sh
+    mode: '0755'
+
+- name: Run vectorization script on EC2
+  command /tmp/vectorize.sh
+  register: shell_output
+
+- name: Show shell script output
+  debug:
+    var: shell_output.stdout
+

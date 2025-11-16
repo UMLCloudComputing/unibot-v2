@@ -1,0 +1,11 @@
+---
+- name: Database generation on EC2 via AWS Systems Manager
+  hosts: all
+  connection: amazon.aws.aws_ssm
+  gather_facts: false 
+ 
+  roles:
+    - install_dependencies
+    - run_download_script
+    - run_shell_script
+

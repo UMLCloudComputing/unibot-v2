@@ -13,6 +13,7 @@ from aws_cdk import (
     aws_ec2 as ec2
 )
 from constructs import Construct
+from constructs.policy_loader import PolicyLoader
 import os
 
 class EcrStackStack(Stack):
@@ -20,8 +21,15 @@ class EcrStackStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        
-        
+        policies = PolicyLoader(self, "PolicyLoader")
+
+        repo = ecr.Repository(
+            self,
+            "OCI-Repository",
+            repository_name= RESOURCE_PREFIX + "repository",
+            removal_policy=RemovalPolicy.DESTROY,
+            
+        )
 
         # S3 bucket
         # This will store raw HTML files that are to be vectorized
@@ -71,15 +79,15 @@ class EcrStackStack(Stack):
         html_data_bucket.grant_read_write(data_download_lambda)
 
         # Vectorization IAM stuff
-        # vectorization_function_policy_doc = iam.PolicyDocument(
-        #     statements=[
-        #         iam.PolicyStatement(
-        #             actions=["s3:GetObject", "ecr:PutImage"],
-        #             resources=[html_data_bucket.bucket_arn, repo.repository_arn ],
-        #             effect=iam.Effect.ALLOW
-        #         )
-        #     ]
-        # )
+        vectorization_function_policy_doc = iam.PolicyDocument(
+            statements=[
+                iam.PolicyStatement(
+                    actions=["s3:GetObject", "ecr:PutImage"],
+                    resources=[html_data_bucket.bucket_arn, repo.repository_arn ],
+                    effect=iam.Effect.ALLOW
+                )
+            ]
+        )
 
         # vectorization_function_role = iam.Role(
         #     self,
@@ -106,14 +114,16 @@ class EcrStackStack(Stack):
         # )
 
 
-        # Ansible EC2 Setup
-        ## EC2 SSM Role
-        ec2_ssm_role = iam.Role(
-            self, "EC2SSMRole",
-            assumed_by=iam.ServicePrincipal("ec2.amazonaws.com"),
-            managed_policies=[
-                iam.ManagedPolicy.from_aws_managaed_policy_name("AmazonSSMManagedInstanceCore")
-            ]
+        # Vectorization EC2 Setup
+        ## EC2 IAM Role
+        vect_ec2_role = iam.Role(
+            self,
+            "Vectorization-EC2-Role",
+            role_name=RESOURCE_PREFIX+"vect-ec2-role",
+            assumed_by=iam.ServicePrincipal("ec2.amazon.com"),
+            inline_policies={
+                "Vectorization-Policy-Doc": 
+            }
         )
         ## Ansible EC2 Instance
         ### Ubuntu AMI source: https://cloud-images.ubuntu.com/locator/ec2/

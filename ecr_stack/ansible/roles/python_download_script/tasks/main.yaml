@@ -1,0 +1,27 @@
+---
+- name: Copy local Python script to EC2 instance
+  copy:
+    src: files/download_script.py
+    dest: /tmp/download_script.py
+    mode: '0755'
+
+- name: Copy local links.txt file to EC2 instance
+  copy:
+    src: files/links.txt
+    dest: /tmp/links.txt
+    mode: '0755'
+
+- name: Make directory to store download data
+  command: mkdir ~/html-data
+
+
+- name: Run Python script on EC2
+  command: python3 /tmp/download_script.py /tmp/links.txt ~/html-data
+  register: python_output
+
+- name: Show Python script output
+  debug:
+    var: python_output.stdout
+
+
+
