@@ -25,4 +25,4 @@ jobs:
           role-to-assume: arn:aws:iam::620339869704:role/gcp-github-oidc-trust-policy
           aws-region: us-east-1
 
-      - name: start up 
+      - name: start up ECS with Fargate(?)

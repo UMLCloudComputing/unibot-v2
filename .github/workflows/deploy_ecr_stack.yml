@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
-          cd comp4600_final
+          cd cdk/comp4600_final
           python3 -m venv .venv
           source .venv/bin/activate
           pip install -r requirements.txt
