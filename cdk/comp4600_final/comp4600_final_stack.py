@@ -1,3 +1,5 @@
+# Our entire CDK stack combined
+
 from aws_cdk import (
     # Duration,
     Stack,
