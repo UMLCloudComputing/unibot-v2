@@ -27,7 +27,7 @@ class Comp4600FinalStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         # ECR
-        self.repo = ecr.Repository(
+        repo = ecr.Repository(
             self,
             "OCI-Repository",
             repository_name= RESOURCE_PREFIX + "ecr-repository",
