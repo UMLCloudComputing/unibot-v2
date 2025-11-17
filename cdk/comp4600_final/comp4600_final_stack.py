@@ -1,4 +1,4 @@
-# Our entire CDK stack combined
+# Our entire CDK stack that will be persistent
 
 from aws_cdk import (
     # Duration,
@@ -8,7 +8,9 @@ from aws_cdk import (
     aws_eks as eks,
     aws_ec2 as ec2,
     aws_iam as iam,
-    aws_s3 as s3
+    aws_s3 as s3,
+    RemovalPolicy,
+    aws_ecr as ecr
 )
 from aws_cdk.lambda_layer_kubectl_v33 import KubectlV33Layer
 from constructs import Construct
@@ -23,6 +25,14 @@ RESOURCE_PREFIX = "gcp-"
 class Comp4600FinalStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
+        # ECR
+        repo = ecr.Repository(
+            self,
+            "OCI-Repository",
+            repository_name= RESOURCE_PREFIX + "ecr-repository",
+            removal_policy=RemovalPolicy.DESTROY,
+        )
 
         # VPC
         vpc = ec2.Vpc(
