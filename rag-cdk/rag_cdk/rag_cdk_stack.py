@@ -39,7 +39,7 @@ class RagCdkStack(Stack):
             vpc=vpc,
             security_group=security_group,
             role=role,
-            key_name:'Gurpreet-KP',
+            key_name='Gurpreet-KP',
             vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC)
         )
     
