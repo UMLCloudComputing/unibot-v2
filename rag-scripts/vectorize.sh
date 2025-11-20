@@ -24,7 +24,7 @@ fi
 
 # ecr_repo="620339869704.dkr.ecr.us-east-1.amazonaws.com/gcp_ecr_repository:latest"
 html_files="./html/"
- 
+
 # if local directory, elif local directory Mac, else ECR 
 case "$1" in
     local)    
@@ -42,7 +42,7 @@ case "$1" in
         ramalama rag $html_files $2 && podman push $2 $REPO_URI
         
         # Self-destruct cloudformation stack
-         
+        
         ;;
     *)
         echo "Invalid option: $1"

@@ -49,11 +49,9 @@ class RagCdkStack(Stack):
             "curl -LsSf https://astral.sh/uv/install.sh | sh",
             "curl -fsSL https://ramalama.ai/install.sh | bash",
             "uv add aiohttp",
-           # f"export REPO_URI={repo_uri}", 
+            # f"export REPO_URI={repo_uri}", 
             "git clone https://github.com/nbottari9/comp4600_final.git",
             "cd comp4600_final/rag-scripts/",
             "uv run download_parallel.py && ./vectorize.sh"
         )
             
-        
-    
