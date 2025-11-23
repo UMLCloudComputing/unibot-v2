@@ -50,7 +50,7 @@ class RagCdkStack(Stack):
         instance.add_user_data(
             "#!/bin/bash",
             "touch /home/ec2-user/.ssh/authorized_keys",
-            "sudo apt install git",
+            "sudo yum install git -y",
             f"echo \"{roshan_ubuntu_ssh_public}\" >> /home/ec2-user/.ssh/authorized_keys",
             "curl -LsSf https://astral.sh/uv/install.sh | sh",
             "curl -fsSL https://ramalama.ai/install.sh | bash",
