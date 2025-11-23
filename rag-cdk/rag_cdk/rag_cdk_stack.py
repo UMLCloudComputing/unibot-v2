@@ -49,7 +49,8 @@ class RagCdkStack(Stack):
         roshan_ubuntu_ssh_public = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHxvsTAM6129jxi9hd5miqXL9uD+wcfvmHeY+Dy79+xz ro@DESKTOP-F1IRVLJ"
         instance.add_user_data(
             "#!/bin/bash",
-            "touch /home/ec2-user/.ssh/authorized_keys"
+            "touch /home/ec2-user/.ssh/authorized_keys",
+            "sudo apt install git",
             f"echo \"{roshan_ubuntu_ssh_public}\" >> /home/ec2-user/.ssh/authorized_keys",
             "curl -LsSf https://astral.sh/uv/install.sh | sh",
             "curl -fsSL https://ramalama.ai/install.sh | bash",
