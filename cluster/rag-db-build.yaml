@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rag-db-builder
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 0
+  template:
+    spec:
+      serviceAccountName: image-builder
+      restartPolicy: Never
+      containers:
+        - name: builder
+          image: 620339869704.dkr.ecr.us-east-1.amazonaws.com/gcp-rag-runner:latest
+          env:
+            - name: AWS_REGION
+              value: "us-east-1"        # so boto3/awscli knows the region
+          # OPTIONAL: if your build script needs args
+          args: ["--source", "s3://my-bucket/files"]
+
