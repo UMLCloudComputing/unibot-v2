@@ -27,7 +27,7 @@ Ramalama deployed on AWS EKS (managed Kubernetes).
 2. RAG database container image stored on another ECR repo
 3. Manually trigger a Kubernetes Job to (re)build the RAG database
 
-> [!INFO]
+> [!IMPORTANT]
 > To update any part of the RAG database building process, locally rebuild and push the `rag-runner` image to the ECR repo. Future jobs automatically fetch the new image.
 
 
