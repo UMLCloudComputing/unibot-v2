@@ -32,42 +32,26 @@ spec:
               "--port",
               "8080",
               "--model",
-              "/mnt/models/gemma-3-4b-it-Q4_K_M.gguf",
-              "--mmproj",
-              "/mnt/models/mmproj-model-f16.gguf",
-              "--no-warmup",
-              "--alias",
-              "ggml-org/gemma-3-4b-it-GGUF",
-              "--temp",
-              "0.8",
-              "--cache-reuse",
-              "256",
-              "--flash-attn",
-              "on",
-              "-ngl",
-              "999",
-              "--threads",
-              "6",
-              "--log-colors",
-              "on",
+              "/models/gemma-3-4b-it-Q4_K_M.gguf",
             ]
 
           ports:
             - containerPort: 8080
           volumeMounts:
-            - mountPath: /mnt/models/gemma-3-4b-it-Q4_K_M.gguf
-              name: model
-            - mountPath: /mnt/models/chat-template_converted
-              name: chat-template
-            - mountPath: /mnt/models/mmproj-model-f16.gguf
-              name: mmproj
+            - name: model
+              mountPath: /models
+              readOnly: true
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: all
+            - name: CUDA_VISIBLE_DEVICES
+              value: all
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
       volumes:
-        - hostPath:
-            path: /Users/nickbottari/.local/share/ramalama/store/huggingface/ggml-org/gemma-3-4b-it-GGUF/blobs/sha256-882e8d2db44dc554fb0ea5077cb7e4bc49e7342a1f0da57901c0802ea21a0863
-          name: model
-        - hostPath:
-            path: /Users/nickbottari/.local/share/ramalama/store/huggingface/ggml-org/gemma-3-4b-it-GGUF/blobs/sha256-f4c40979f1f766dadf02add556a0dc41e7a89ce582cc833cf146bc2f08b84c71
-          name: chat-template
-        - hostPath:
-            path: /Users/nickbottari/.local/share/ramalama/store/huggingface/ggml-org/gemma-3-4b-it-GGUF/blobs/sha256-8c0fb064b019a6972856aaae2c7e4792858af3ca4561be2dbf649123ba6c40cb
-          name: mmproj
+        - name: model
+          image:
+            reference: rlcr.io/ramalama/gemma-3-4b-it:gguf-image
+            pullPolicy: IfNotPresent
