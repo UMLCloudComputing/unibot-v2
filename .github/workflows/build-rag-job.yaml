@@ -16,7 +16,7 @@ jobs:
       - name: Update Kubeconfig for EKS
         run: |
           aws eks update-kubeconfig \
-            --name <CLUSTER-NAME> \
+            --name gcp-cluster \
             --region us-east-1
 
       - name: Apply Job
