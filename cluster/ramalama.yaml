@@ -1,0 +1,57 @@
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with ramalama-0.13.0
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ramalama
+  labels:
+    app: ramalama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ramalama
+  template:
+    metadata:
+      labels:
+        app: ramalama
+    spec:
+      containers:
+        - name: ramalama
+          image: quay.io/ramalama/ramalama:latest
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+          command: ["llama-server"]
+          args:
+            [
+              "--host",
+              "0.0.0.0",
+              "--port",
+              "8080",
+              "--model",
+              "/models/gemma-3-4b-it-Q4_K_M.gguf",
+            ]
+
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: model
+              mountPath: /models
+              readOnly: true
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: all
+            - name: CUDA_VISIBLE_DEVICES
+              value: all
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+      volumes:
+        - name: model
+          image:
+            reference: rlcr.io/ramalama/gemma-3-4b-it:gguf-image
+            pullPolicy: IfNotPresent

@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+IMAGE="${1:-rag-runner:latest}"
+
+echo "▶ Detecting active AWS credentials…"
+
+# Try STS — works for *both* SSO + plain credentials
+if ! aws sts get-caller-identity >/dev/null 2>&1; then
+    echo "❌ No AWS credentials are active. Run one of these first:"
+    echo "   aws configure"
+    echo "   aws sso login"
+    echo "   or assume-role manually"
+    exit 1
+fi
+
+echo "✔ AWS credentials detected"
+
+# Extract actual credentials in a clean way
+AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id || true)
+AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key || true)
+AWS_SESSION_TOKEN=$(aws configure get aws_session_token || true)
+AWS_DEFAULT_REGION=$(aws configure get region || echo "us-east-1")
+
+# If SSO, static credentials will be empty — pull from CLI cache
+if [[ -z "$AWS_ACCESS_KEY_ID" ]]; then
+    echo "✔ Detected AWS SSO credentials"
+    # Extract from cached SSO session
+    CACHED=$(find ~/.aws/cli/cache -type f -name "*.json" | head -n 1)
+    if [[ -z "$CACHED" ]]; then
+        echo "❌ Cannot find cached AWS SSO credentials."
+        echo "   Run: aws sso login"
+        exit 1
+    fi
+
+    AWS_ACCESS_KEY_ID=$(jq -r '.Credentials.AccessKeyId' "$CACHED")
+    AWS_SECRET_ACCESS_KEY=$(jq -r '.Credentials.SecretAccessKey' "$CACHED")
+    AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' "$CACHED")
+fi
+
+# Validate
+if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" ]]; then
+    echo "❌ Could not extract AWS credentials."
+    exit 1
+fi
+
+echo "✔ Exporting credentials for container…"
+
+export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_DEFAULT_REGION
+
+echo "▶ Running container $IMAGE with AWS credentials…"
+
+podman run --privileged --rm -it \
+    -v /dev/dri:/dev/dri \
+    --security-opt label=disable \
+    -e AWS_ACCESS_KEY_ID \
+    -e AWS_SECRET_ACCESS_KEY \
+    -e AWS_SESSION_TOKEN \
+    -e AWS_DEFAULT_REGION \
+    "$IMAGE"
+

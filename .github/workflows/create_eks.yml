@@ -1,0 +1,43 @@
+name: Create EKS Cluster
+run-name: ${{ github.actor }} is creating the EKS Cluster
+on: workflow_dispatch
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  create-cluster:
+    name: Create EKS cluster
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+
+          ARCH=amd64 \
+          PLATFORM=$(uname -s)_$ARCH \
+          curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz" \
+          curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_checksums.txt" | grep $PLATFORM | sha256sum --check \
+          tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz \
+          sudo install -m 0755 /tmp/eksctl /usr/local/bin && rm /tmp/eksctl \
+
+          # LIVING ON THE EDGE
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 | bash
+
+      - name: Login to AWS cli
+        uses: aws-actions/configure-aws-credentials@main
+        with:
+          role-to-assume: arn:aws:iam::620339869704:role/gcp-github-oidc-trust-policy
+          aws-region: us-east-1
+
+      - name: Deploy cluster with eksctl
+        shell: bash
+        run: |
+          cd cluster \
+          eksctl create cluster -f cluster.yaml

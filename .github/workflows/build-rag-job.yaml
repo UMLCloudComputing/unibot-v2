@@ -1,0 +1,28 @@
+name: Run RAG Builder Job
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  run-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::620339869704:role/gcp-github-oidc-trust-policy 
+          aws-region: us-east-1
+
+      - name: Update Kubeconfig for EKS
+        run: |
+          aws eks update-kubeconfig \
+            --name <CLUSTER-NAME> \
+            --region us-east-1
+
+      - name: Apply Job
+        run: kubectl apply -f cluster/rag-builder-job.yaml
+
+      - name: Wait for Job Completion
+        run: |
+          kubectl wait --for=condition=complete job/rag-builder-job --timeout=600s
+

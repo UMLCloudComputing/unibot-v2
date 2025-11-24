@@ -27,8 +27,6 @@ case "$1" in
         echo "Vectorizing and pushing to ecr..."
         ramalama rag $html_files $2 && podman push $2 $REPO_URI
         
-        # Self-destruct cloudformation stack
-        
         ;;
     *)
         echo "Invalid option: $1"

@@ -1,5 +1,5 @@
-name: Destroy ECR repo
-run-name: ${{ github.actor }} is destroying the ECR repo
+name: Deploy RAG Database Container Registry 
+run-name: ${{ github.actor }} is deploying the container registry
 on:
   #   push:
   #     branches:
@@ -11,8 +11,8 @@ permissions:
   contents: read
 
 jobs:
-  destroy-ecr-repo:
-    name: Destroy ECR repo
+  deploy-ecr-repo:
+    name: Deploy RAG Database Container Registry
     runs-on: ubuntu-latest
 
     steps:
@@ -25,10 +25,9 @@ jobs:
           role-to-assume: arn:aws:iam::620339869704:role/gcp-github-oidc-trust-policy
           aws-region: us-east-1
 
-      - name: Destroy repo
+      - name: Create Repo
         shell: bash
         run: |
-          aws ecr delete-repository \
-          --repository-name gcp_ecr_repository \
-          --force \
+          aws ecr create-repository \
+          --repository-name gcp_ecr_repo \
           --region us-east-1

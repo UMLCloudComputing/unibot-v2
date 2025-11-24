@@ -1,0 +1,33 @@
+name: Deploy RAG Runner Container Registry 
+run-name: ${{ github.actor }} is deploying the container registry
+on:
+  #   push:
+  #     branches:
+  #       - main
+  workflow_dispatch
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-ecr-repo:
+    name: Deploy RAG Runner Container Registry
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Login to AWS
+        uses: aws-actions/configure-aws-credentials@main
+        with:
+          role-to-assume: arn:aws:iam::620339869704:role/gcp-github-oidc-trust-policy
+          aws-region: us-east-1
+
+      - name: Create Repo
+        shell: bash
+        run: |
+          aws ecr create-repository \
+          --repository-name gcp-rag-runner \
+          --region us-east-1
