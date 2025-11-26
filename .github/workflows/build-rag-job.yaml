@@ -3,12 +3,15 @@ name: Run RAG Builder Job
 on:
   workflow_dispatch: {}
 
+permissions:
+    id-token: write
+    contents: read
 jobs:
-  run-job:
+  run-rag-builder:
     runs-on: ubuntu-latest
     steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v3
+      - name: Login to AWS CLI
+        uses: aws-actions/configure-aws-credentials@main
         with:
           role-to-assume: arn:aws:iam::620339869704:role/gcp-github-oidc-trust-policy 
           aws-region: us-east-1
