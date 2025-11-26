@@ -10,6 +10,9 @@ jobs:
   run-rag-builder:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Login to AWS CLI
         uses: aws-actions/configure-aws-credentials@main
         with:
