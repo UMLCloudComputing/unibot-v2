@@ -41,3 +41,10 @@ jobs:
         run: |
           cd cluster
           eksctl create cluster -f cluster.yaml
+
+      - name: Deploy Nvidia GPU Operator
+        shell: bash
+        run: |
+          cd cluster
+          chmod +x operator.sh
+          ./operator.sh
