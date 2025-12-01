@@ -1,0 +1,73 @@
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with ramalama-0.13.0
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: ramalama-main
+  labels:
+    app: ramalama-main
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ramalama-main
+  template:
+    metadata:
+      labels:
+        app: ramalama-main
+    spec:
+      containers:
+      - name: llamacpp
+        image: quay.io/ramalama/ramalama:latest
+        command: ["llama-server"]
+        args: ['--host', '0.0.0.0', '--port', '8080', '--model', '/mnt/models/gemma-3-4b-it-Q4_K_M.gguf', '--mmproj', '/mnt/models/mmproj-model-f16.gguf', '--no-warmup', '--alias', 'ggml-org/gemma-3-4b-it-GGUF', '--temp', '0.8', '--cache-reuse', '256', '--flash-attn', 'on', '-ngl', '999', '--threads', '6', '--log-colors', 'on']
+
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - mountPath: /mnt/models/gemma-3-4b-it-Q4_K_M.gguf
+          name: model
+        - mountPath: /rag
+          name: rag
+        - mountPath: /mnt/models/chat_template_converted
+          name: chat_template
+        - mountPath: /mnt/models/mmproj-model-f16.gguf
+          name: mmproj
+        - mountPath: /root/.aws # Authenticate to pull RAG image
+          name: aws-creds
+        env:
+          - name: NVIDIA_VISIBLE_DEVICES
+            value: all
+          - name: CUDA_VISIBLE_DEVICES
+            value: all 
+      volumes:
+      - hostPath:
+          path: /Users/nickbottari/.local/share/ramalama/store/huggingface/ggml-org/gemma-3-4b-it-GGUF/blobs/sha256-882e8d2db44dc554fb0ea5077cb7e4bc49e7342a1f0da57901c0802ea21a0863
+        name: model
+      - image:
+          reference: 620339869704.dkr.ecr.us-east-1.amazonaws.com/gcp_ecr_repository
+          pullPolicy: Always
+        name: rag
+      - hostPath:
+          path: /Users/nickbottari/.local/share/ramalama/store/huggingface/ggml-org/gemma-3-4b-it-GGUF/blobs/sha256-f4c40979f1f766dadf02add556a0dc41e7a89ce582cc833cf146bc2f08b84c71
+        name: chat_template
+      - hostPath:
+          path: /Users/nickbottari/.local/share/ramalama/store/huggingface/ggml-org/gemma-3-4b-it-GGUF/blobs/sha256-8c0fb064b019a6972856aaae2c7e4792858af3ca4561be2dbf649123ba6c40cb
+        name: mmproj
+      - secret: # Authenticate to pull RAG image
+          secretName: aws-creds
+        name: aws-creds
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: ramalama-main-svc
+spec:
+    selector: { app: ramalama-main }
+    ports:
+        - name: http
+          port: 80
+          targetPort: 8080
+    type: ClusterIP 
