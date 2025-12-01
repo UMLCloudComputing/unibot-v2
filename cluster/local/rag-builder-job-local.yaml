@@ -11,8 +11,18 @@ spec:
         job: rag-builder
     spec:
       restartPolicy: Never   # Never restart the pod
+      imagePullSecrets: 
+        - name: ecr-creds 
       containers:
         - name: rag-builder
           image: 620339869704.dkr.ecr.us-east-1.amazonaws.com/gcp-rag-runner:latest
           imagePullPolicy: Always
-          
+          securityContext:
+            privileged: true 
+          volumeMounts:
+            - name: aws-creds
+              mountPath: /root/.aws
+      volumes:
+        - name: aws-creds
+          secret:
+            secretName: aws-creds
