@@ -32,21 +32,21 @@ accessConfig:
   accessEntries:
     - principalARN: arn:aws:iam::620339869704:user/nick_bottari@student.uml.edu
       accessPolicies:
-        - policyARN: arn:aws:eks::aws-cluster-policy/AmazonEKSClusterAdminPolicy
+        - policyARN: arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy
           accessScope:
             type: cluster
     - principalARN: arn:aws:iam::620339869704:user/gurpreet_singh@student.uml.edu
       accessPolicies:
-        - policyARN: arn:aws:eks::aws-cluster-policy/AmazonEKSClusterAdminPolicy
+        - policyARN: arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy
           accessScope:
             type: cluster
     - principalARN: arn:aws:iam::620339869704:user/roshankarthik_rajesh@student.uml.edu
       accessPolicies:
-        - policyARN: arn:aws:eks::aws-cluster-policy/AmazonEKSClusterAdminPolicy
+        - policyARN: arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy
           accessScope:
             type: cluster
     - principalARN: arn:aws:iam::620339869704:user/nicolas_busse@student.uml.edu
       accessPolicies:
-        - policyARN: arn:aws:eks::aws-cluster-policy/AmazonEKSClusterAdminPolicy
+        - policyARN: arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy
           accessScope:
             type: cluster
