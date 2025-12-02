@@ -42,17 +42,17 @@ jobs:
           cd cluster
           eksctl create cluster -f cluster.yaml
 
-     - name: Update kubeconfig
-       shell: bash
-       run: |
+      - name: Update kubeconfig
+        shell: bash
+        run: |
           aws eks update-kubeconfig --region us-east-1 --name gcp
 
       - name: Verify cluster with readiness check
         shell: bash
         run: |
-           kubectl wait --for=condition=Available deployment/coredns -n kube-system --timeout=10m
-           kubectl wait --for=condition=Ready nodes --all --timeout=10m
-           kubectl wait --for=condition=Available deployment/kyverno -n kyverno --timeout=10m || true
+          kubectl wait --for=condition=Available deployment/coredns -n kube-system --timeout=10m
+          kubectl wait --for=condition=Ready nodes --all --timeout=10m
+          kubectl wait --for=condition=Available deployment/kyverno -n kyverno --timeout=10m || true
  
       - name: Deploy Nvidia GPU Operator with retry
         shell: bash
