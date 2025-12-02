@@ -28,6 +28,9 @@ iam:
         - arn:aws:iam::620339869704:policy/gcp-oidc-managed-policy
       roleName: gcp-oidc-role
 
+cloudformation:
+  disableTerminationProtection: true
+
 accessConfig:
   accessEntries:
     - principalARN: arn:aws:iam::620339869704:user/nick_bottari@student.uml.edu
