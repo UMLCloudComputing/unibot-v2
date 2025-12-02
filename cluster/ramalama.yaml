@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: ramalama
-          image: quay.io/ramalama/ramalama:latest
+          image: rlcr.io/ramalama/llamacpp-cuda-distroless:latest
           resources:
             limits:
               nvidia.com/gpu: 1
@@ -32,7 +32,7 @@ spec:
               "--port",
               "8080",
               "--model",
-              "/models/gemma-3-4b-it-Q4_K_M.gguf",
+              "/models/models/gemma-3-4b-it-Q6_K.gguf",
             ]
 
           ports:
@@ -53,5 +53,5 @@ spec:
       volumes:
         - name: model
           image:
-            reference: rlcr.io/ramalama/gemma-3-4b-it:gguf-image
+            reference: rlcr.io/ramalama/gemma-3-4b-it:llamacpp-cuda
             pullPolicy: IfNotPresent
