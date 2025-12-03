@@ -60,3 +60,4 @@ jobs:
           cd cluster
           chmod +x operator.sh
           ./operator.sh
+

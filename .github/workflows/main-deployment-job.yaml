@@ -1,4 +1,4 @@
-name: Run RAG Builder Job
+name: Deploy Gemma3 Model
 
 on:
   workflow_dispatch: {}
@@ -25,10 +25,6 @@ jobs:
             --name gcp \
             --region us-east-1
 
-      - name: Apply Job
-        run: kubectl apply -f cluster/eks/rag-builder-job-eks.yaml
-
-      - name: Wait for Job Completion
-        run: |
-          kubectl wait --for=condition=complete job/rag-builder-job --timeout=600s
+      - name: Apply Deployment
+        run: kubectl apply -f cluster/eks/ramalama.yaml
 
