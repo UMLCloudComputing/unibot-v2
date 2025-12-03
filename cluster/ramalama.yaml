@@ -20,27 +20,12 @@ spec:
     spec:
       containers:
         - name: ramalama
-          image: rlcr.io/ramalama/llamacpp-cuda-distroless:latest
+          image: rlcr.io/ramalama/gemma-3-4b-it:llamacpp-cuda 
           resources:
             limits:
               nvidia.com/gpu: 1
-          command: ["llama-server"]
-          args:
-            [
-              "--host",
-              "0.0.0.0",
-              "--port",
-              "8080",
-              "--model",
-              "/models/models/gemma-3-4b-it-Q6_K.gguf",
-            ]
-
           ports:
             - containerPort: 8080
-          volumeMounts:
-            - name: model
-              mountPath: /models
-              readOnly: true
           env:
             - name: NVIDIA_VISIBLE_DEVICES
               value: all
@@ -50,8 +35,17 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities: { drop: ["ALL"] }
-      volumes:
-        - name: model
-          image:
-            reference: rlcr.io/ramalama/gemma-3-4b-it:llamacpp-cuda
-            pullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: ramalama-svc
+spec:
+    selector:
+        app: ramalama
+    ports:
+        - protocol: TCP
+          port: 8080
+          targetPort: 8080
+    type: LoadBalancer
+
