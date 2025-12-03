@@ -36,7 +36,14 @@ jobs:
           role-to-assume: arn:aws:iam::620339869704:role/gcp-github-oidc-trust-policy
           aws-region: us-east-1
 
+      - name: Disable stack termination protection
+        shell: bash
+        run: |
+            cd cluster
+            ./disable_stack_prot.sh
+       
+
       - name: Destroy cluster with eksctl
         shell: bash
         run: |
-          eksctl delete cluster --name gcp --disable-nodegroup-eviction
+          eksctl delete cluster --name gcp --disable-nodegroup-eviction --force
