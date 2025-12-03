@@ -39,7 +39,7 @@ jobs:
       - name: Deploy cluster with eksctl
         shell: bash
         run: |
-          cd cluster
+          cd cluster/eks`
           eksctl create cluster -f cluster.yaml
 
       - name: Update kubeconfig
