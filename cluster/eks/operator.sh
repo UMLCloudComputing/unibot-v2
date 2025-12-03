@@ -9,8 +9,5 @@ helm install nvidia-gpu-operator nvidia/gpu-operator \
 --version=v25.10.0 \
 --wait \
 --timeout 15m \
---set driver.enabled=false \
---set toolkit.enabled=true \
---set devicePlugin.enabled=true 
 
 
