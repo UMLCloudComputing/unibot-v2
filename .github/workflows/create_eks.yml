@@ -57,7 +57,7 @@ jobs:
       - name: Deploy Nvidia GPU Operator
         shell: bash
         run: |
-          cd cluster
+          cd cluster/eks
           chmod +x operator.sh
           ./operator.sh
 
