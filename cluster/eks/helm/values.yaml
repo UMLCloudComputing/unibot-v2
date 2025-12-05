@@ -1,30 +1,23 @@
-llamaServer:
-  image: ghcr.io/ggerganov/llama.cpp:server
+model:
+  image: rlcr.io/ramalama/gemma-3-4b-it:llamacpp-cuda
   replicaCount: 1
   port: 8080
-  modelPath: /models/model.gguf
-  args: "-c 4096"
-  resources: {}
-
-  volume:
-    enabled: true
-    hostPath: "" # set for local dev only
-    pvcSize: 10Gi
+  gpuCount: 1 
 
 llamaStack:
-  image: your-org/llama-stack:latest
+  image: llama-stack/distribution-meta-reference-gpu:latest
   replicaCount: 1
   port: 8000
 
   config:
-    modelEndpoint: "http://llama-server:8080"
-    vectorHost: "qdrant"
+    modelEndpoint: "http://model:8080"
+    vectorHost: "rag-database"
     vectorPort: 6333
 
   resources: {}
 
-qdrant:
-  image: qdrant/qdrant
+rag-database:
+  image: 
   replicaCount: 1
   port: 6333
   storage: 10Gi
