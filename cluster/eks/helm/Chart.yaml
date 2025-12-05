@@ -1,0 +1,7 @@
+apiVersion: v2
+name: University Chatbot
+description: University Chatbot using llama-server, llama-stack, and Qdrant RAG
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+

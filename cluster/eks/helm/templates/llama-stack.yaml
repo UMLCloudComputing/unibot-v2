@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama-stack
+spec:
+  template:
+    spec:
+      containers:
+      - name: stack
+        image: llama-stack/distribution-meta-reference-gpu
+        volumeMounts:
+        - name: config
+          mountPath: /etc/llama-stack/config.yaml
+          subPath: config.yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: llama-stack-config
+data:
+  config.yaml: |
+    model:
+      backend: llamacpp
+      endpoint: http://model:8080
+
+    vector_store:
+      type: qdrant
+      host: rag-database
+      port: 6333
+

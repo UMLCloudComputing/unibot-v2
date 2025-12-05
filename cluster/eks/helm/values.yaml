@@ -1,0 +1,32 @@
+llamaServer:
+  image: ghcr.io/ggerganov/llama.cpp:server
+  replicaCount: 1
+  port: 8080
+  modelPath: /models/model.gguf
+  args: "-c 4096"
+  resources: {}
+
+  volume:
+    enabled: true
+    hostPath: "" # set for local dev only
+    pvcSize: 10Gi
+
+llamaStack:
+  image: your-org/llama-stack:latest
+  replicaCount: 1
+  port: 8000
+
+  config:
+    modelEndpoint: "http://llama-server:8080"
+    vectorHost: "qdrant"
+    vectorPort: 6333
+
+  resources: {}
+
+qdrant:
+  image: qdrant/qdrant
+  replicaCount: 1
+  port: 6333
+  storage: 10Gi
+  resources: {}
+
