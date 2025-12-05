@@ -41,6 +41,10 @@ data:
       type: qdrant
       host: {{ .Values.llamaStack.config.vectorHost }} 
       port: {{ .Values.llamaStack.config.vectorPort }} 
+    
+    ui:
+      enabled: true
+      bind: "0.0.0.0:3000" 
 ---
 apiVersion: v1
 kind: Service
@@ -52,3 +56,15 @@ spec:
     ports:
     - port: {{ .Values.llamaStack.port }}
       targetPort: {{{ .Values.llamaStack.port }}
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+    name: llama-stack-ui
+spec:
+    type: LoadBalancer
+    selector:
+        app: llama-stack
+    ports:
+    - port: 3000
+      targetPort: 3000
