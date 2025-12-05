@@ -9,7 +9,7 @@ metadata:
   labels:
     app: model
 spec:
-  replicas: 1
+  replicas: {{ .Values.model.replicaCount }}
   selector:
     matchLabels:
       app: model
@@ -20,23 +20,21 @@ spec:
     spec:
       containers:
         - name: model
-          image: rlcr.io/ramalama/gemma-3-4b-it:llamacpp-cuda 
+          image: {{ .Values.model.image }}
           ports:
-            - containerPort: 8080
+            - containerPort: {{ .Values.model.port }}
           resources:
             limits:
-              nvidia.com/gpu: 1 
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#     name: ramalama-svc
-# spec:
-#     selector:
-#         app: ramalama
-#     ports:
-#         - protocol: TCP
-#           port: 8080
-#           targetPort: 8080
-#     type: LoadBalancer
+              nvidia.com/gpu: {{ .Values.model.gpuCount }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: model
+spec:
+    selector:
+        app: model
+    ports:
+    - port: {{ .Values.model.port }}
+      targetPort: {{ .Values.model.port }} 
 

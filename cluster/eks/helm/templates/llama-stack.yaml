@@ -3,15 +3,29 @@ kind: Deployment
 metadata:
   name: llama-stack
 spec:
+  replicas: {{ .Values.llamaStack.replicaCount }}
+  selector:
+    matchLabels:
+        app: llama-stack
   template:
+    metadata:
+        labels:
+            app: llama-stack
     spec:
       containers:
       - name: stack
-        image: llama-stack/distribution-meta-reference-gpu
+        image: {{ .Values.llamaStack.image }}  
         volumeMounts:
         - name: config
           mountPath: /etc/llama-stack/config.yaml
           subPath: config.yaml
+        ports:
+        - containerPort: {{ .Values.llamaStack.port }} 
+        resources: {{ toYaml .Values.llamaStack.resources | nindent 10 }}
+      volumes:
+      - name: config
+        configMap:
+          name: llama-stack-config 
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -21,10 +35,20 @@ data:
   config.yaml: |
     model:
       backend: llamacpp
-      endpoint: http://model:8080
+      endpoint: {{ .Values.llamaStack.config.modelEndpoint }}  
 
     vector_store:
       type: qdrant
-      host: rag-database
-      port: 6333
-
+      host: {{ .Values.llamaStack.config.vectorHost }} 
+      port: {{ .Values.llamaStack.config.vectorPort }} 
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: llama-stack
+spec:
+    selector: 
+        app: llama-stack
+    ports:
+    - port: {{ .Values.llamaStack.port }}
+      targetPort: {{{ .Values.llamaStack.port }}

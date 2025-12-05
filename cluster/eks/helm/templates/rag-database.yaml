@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-database
+spec:
+  serviceName: "rag-database"
+  replicas: {{ .Values.rag-database.replicaCount }}
+  selector: 
+    matchLabels:
+        app: rag-database
+  template:
+    metadata:
+        labels:
+            app: rag-database 
+    spec:
+      containers:
+      - name: rag-database
+        image: {{ .Values.rag-database.image }} 
+        ports:
+        - containerPort: {{ .Values.rag-database.image }} 
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: rag-database
+spec:
+    clusterIP: None
+    selector:
+        app: rag-database
+    ports:
+    - port: {{ .Values.rag-database.port }}
+      targetPort: {{ .Values.rag-database.port }}
+
+# This will need a configured service account to pull from ECR
+# ADD THAT IN
