@@ -17,7 +17,7 @@ llamaStack:
   resources: {}
 
 rag-database:
-  image: 
+  image: 620339869704.dkr.ecr.us-east-1.amazonaws.com/gcp_ecr_repository:latest
   replicaCount: 1
   port: 6333
   storage: 10Gi
