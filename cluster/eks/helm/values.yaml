@@ -29,4 +29,3 @@ qdrant:
   port: 6333
   storage: 10Gi
   resources: {}
-
