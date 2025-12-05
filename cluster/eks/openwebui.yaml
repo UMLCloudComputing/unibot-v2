@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: openwebui
   template:
-    metdata:
+    metadata:
       labels:
         app: openwebui
     spec:
@@ -18,5 +18,9 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            OPENAI_API_BASE_URL: "http://llama-stack.default.svc.cluster.local:8080"
-            OPENAI_API_KEY: "none"
+            - name: OPENAI_API_BASE_URL
+              value: "http://llama-stack.default.svc.cluster.local:8000"
+            - name: OPENAI_API_KEY
+              value: "none"
+            - name: ENABLE_PERSISTENT_CONFIG
+              value: "false"
