@@ -16,10 +16,10 @@ spec:
         - name: open-webui
           image: ghcr.io/open-webui/open-webui:latest
           ports:
-            - containerPort: { { .Values.openWebUi.containerPort } }
+            - containerPort: {{ .Values.openWebUi.containerPort }}
           env:
             - name: OPENAI_API_BASE_URL
-              value: { { .Values.openWebUi.openAiApiBaseUrl } }
+              value: {{ .Values.openWebUi.openAiApiBaseUrl }}
             - name: OPENAI_API_KEY
               value: "none"
             - name: ENABLE_PERSISTENT_CONFIG
@@ -35,6 +35,6 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: { { .Values.openWebUi.containerPort } }
+      targetPort: {{ .Values.openWebUi.containerPort }}
       name: http
   type: LoadBalancer
