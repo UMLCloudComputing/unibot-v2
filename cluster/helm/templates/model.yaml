@@ -30,11 +30,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: {{ .Values.model.name }}
+  name: {{ .Values.model.name }}
 spec:
-    selector:
-        app: {{ .Values.model.name }}
-    ports:
+  selector:
+    app: {{ .Values.model.name }}
+  ports:
     - port: {{ .Values.model.port }}
-      targetPort: {{ .Values.model.port }} 
-
+      targetPort: {{ .Values.model.port }}
+  type: LoadBalancer

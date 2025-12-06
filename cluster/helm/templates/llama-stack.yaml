@@ -6,19 +6,19 @@ spec:
   replicas: {{ .Values.llamaStack.replicaCount }}
   selector:
     matchLabels:
-        app: llama-stack
+      app: llama-stack
   template:
     metadata:
-        labels:
-            app: llama-stack
+      labels:
+        app: llama-stack
     spec:
       containers:
       - name: stack
-        image: {{ .Values.llamaStack.image }}  
+        image: {{ .Values.llamaStack.image }}
         volumeMounts:
         - name: config
-          mountPath: /etc/llama-stack/config.yaml
-          subPath: config.yaml
+          mountPath: /usr/local/lib/python3.12/site-packages/llama_stack/distributions/starter/run.yaml
+          subPath: run.yaml
         ports:
         - containerPort: {{ .Values.llamaStack.port }} 
         resources: {{ toYaml .Values.llamaStack.resources | nindent 10 }}
