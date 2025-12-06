@@ -290,11 +290,7 @@ data:
           table_name: openai_conversations
           backend: sql_default
     registered_resources:
-      models:
-      - metadata: {}
-        model_id: /models/gemma-3-4b-it-Q6_K.gguf
-        provider_id: llamacpp
-        provider_model_id: null
+      models: []
       shields:
       - shield_id: llama-guard
         provider_id: ${env.SAFETY_MODEL:+llama-guard}
