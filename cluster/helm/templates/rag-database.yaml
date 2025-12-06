@@ -13,19 +13,6 @@ spec:
         labels:
             app: {{ .Values.ragDatabase.name }}
     spec:
-      initContainers:
-      - name: copy-bootstrap-data
-        image: {{ .Values.ragDatabase.image }}
-        command: ["/bin/sh", "-c"]
-        args:
-          - |
-            echo "Copying initial Qdrant data..."
-            cp -R /bootstrap-qdrant/* /qdrant-storage || true
-            echo "Done."
-        volumeMounts:
-        - name: qdrant-storage
-          mountPath: /qdrant-storage 
-
       containers:
       - name: {{ .Values.ragDatabase.name }}
         image: qdrant/qdrant:latest 
@@ -34,17 +21,12 @@ spec:
         volumeMounts:
         - name: qdrant-storage
           mountPath: /qdrant/storage
+      volumes:
+      - image:
+          reference: {{ .Values.ragDatabase.image }}
+          pullPolicy: Always
+        name: qdrant-storage 
 
-      volumes: []
-  volumeClaimTemplates:
-  - metadata:
-      name: qdrant-storage
-    spec:
-      storageClassName: gp2 
-      accessModes: ["ReadWriteOnce"]
-      resources:
-        requests:
-          storage: {{ .Values.ragDatabase.storage }}
 ---
 apiVersion: v1
 kind: Service
