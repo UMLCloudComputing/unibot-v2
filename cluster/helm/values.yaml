@@ -1,10 +1,10 @@
 model:
-  name: model 
+  name: model
   image: rlcr.io/ramalama/gemma-3-4b-it:llamacpp-cuda
   replicaCount: 1
   port: 8080
-  gpuCount: 1 
-  resources: {} 
+  gpuCount: 1
+  resources: {}
 
 llamaStack:
   image: docker.io/llamastack/distribution-starter:latest
@@ -13,7 +13,7 @@ llamaStack:
   resources: {}
 
 ragDatabase:
-  name: qdrant 
+  name: qdrant
   image: 620339869704.dkr.ecr.us-east-1.amazonaws.com/gcp_ecr_repository:latest
   replicaCount: 1
   port: 6333
@@ -21,3 +21,6 @@ ragDatabase:
   collectionName: rag
   resources: {}
 
+openWebUi:
+  openAiApiBaseUrl: "http://llama-stack.default.svc.cluster.local:8000"
+  containerPort: 8080
