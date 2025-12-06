@@ -2,7 +2,7 @@ model:
   image: rlcr.io/ramalama/gemma-3-4b-it:llamacpp-cuda
   replicaCount: 1
   port: 8080
-  gpuCount: 1 
+  gpuCount: 1
 
 llamaStack:
   image: llama-stack/distribution-meta-reference-gpu:latest
@@ -22,3 +22,7 @@ rag-database:
   port: 6333
   storage: 10Gi
   resources: {}
+
+openWebUi:
+  openAiApiBaseUrl: "http://llama-stack.default.svc.cluster.local:8000"
+  containerPort: 8080
