@@ -48,9 +48,3 @@ jobs:
           cd cluster/eks
           chmod +x operator.sh
           ./operator.sh
-
-      - name: Install EBS CSI Driver
-        shell: bash
-        run: |
-          helm repo add deliveryhero https://raw.githubusercontent.com/deliveryhero/helm-charts/refs/heads/master/
-          helm install my-aws-ebs-csi-driver deliveryhero/aws-ebs-csi-driver --version 2.17.4 --namespace aws-csi-driver
