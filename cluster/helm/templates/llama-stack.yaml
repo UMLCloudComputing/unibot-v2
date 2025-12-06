@@ -129,8 +129,9 @@ data:
       - provider_id: llamacpp
         provider_type: remote::llama-openai-compat
         config:
-          openai_compat_api_base: http://model.default.svc.cluster.local:8080/v1
-          api_key: null
+          openai_compat_api_base: http://model.default.svc.cluster.local:8080/v1/
+          refresh_models: true
+          api_key: ""
       vector_io:
       - provider_id: faiss
         provider_type: inline::faiss
@@ -327,3 +328,4 @@ spec:
     ports:
     - port: {{ .Values.llamaStack.port }}
       targetPort: {{ .Values.llamaStack.port }}
+    type: LoadBalancer
