@@ -22,11 +22,10 @@ spec:
         - name: qdrant-storage
           mountPath: /qdrant/storage
       volumes:
-      - image:
+      - name: qdrant-storage 
+        image:
           reference: {{ .Values.ragDatabase.image }}
           pullPolicy: Always
-        name: qdrant-storage 
-
 ---
 apiVersion: v1
 kind: Service
