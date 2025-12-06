@@ -1,5 +1,5 @@
 name: Destroy EKS Cluster
-run-name: ${{ github.actor }} is creating the EKS Cluster
+run-name: ${{ github.actor }} is destroying the EKS Cluster
 on: workflow_dispatch
 
 permissions:
