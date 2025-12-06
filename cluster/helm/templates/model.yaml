@@ -5,21 +5,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: model
+  name: {{ .Values.model.name }}
   labels:
-    app: model
+    app: {{ .Values.model.name }}
 spec:
   replicas: {{ .Values.model.replicaCount }}
   selector:
     matchLabels:
-      app: model
+      app: {{ .Values.model.name }}
   template:
     metadata:
       labels:
-        app: model
+        app: {{ .Values.model.name }}
     spec:
       containers:
-        - name: model
+        - name: {{ .Values.model.name }}
           image: {{ .Values.model.image }}
           ports:
             - containerPort: {{ .Values.model.port }}
@@ -30,10 +30,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: model
+    name: {{ .Values.model.name }}
 spec:
     selector:
-        app: model
+        app: {{ .Values.model.name }}
     ports:
     - port: {{ .Values.model.port }}
       targetPort: {{ .Values.model.port }} 

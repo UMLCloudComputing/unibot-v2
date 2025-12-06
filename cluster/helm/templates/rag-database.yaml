@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.ragDatabase.name }}
+spec:
+  serviceName: {{ .Values.ragDatabase.name }}
+  replicas: {{ .Values.ragDatabase.replicaCount }}
+  selector: 
+    matchLabels:
+        app: {{ .Values.ragDatabase.name }}
+  template:
+    metadata:
+        labels:
+            app: {{ .Values.ragDatabase.name }}
+    spec:
+      initContainers:
+      - name: copy-bootstrap-data
+        image: {{ .Values.ragDatabase.image }}
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            echo "Copying initial Qdrant data..."
+            cp -R /bootstrap-qdrant/* /qdrant-storage || true
+            echo "Done."
+        volumeMounts:
+        - name: qdrant-storage
+          mountPath: /qdrant-storage 
+
+      containers:
+      - name: {{ .Values.ragDatabase.name }}
+        image: qdrant/qdrant:latest 
+        ports:
+        - containerPort: {{ .Values.ragDatabase.port }} 
+        volumeMounts:
+        - name: qdrant-storage
+          mountPath: /qdrant/storage
+
+      volumes: []
+  volumeClaimTemplates:
+  - metadata:
+      name: qdrant-storage
+    spec:
+      storageClassName: gp2 
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: {{ .Values.ragDatabase.storage }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ .Values.ragDatabase.name }}
+spec:
+    clusterIP: None
+    selector:
+        app: {{ .Values.ragDatabase.name }}
+    ports:
+    - name: http 
+      port: {{ .Values.ragDatabase.port }}
+      targetPort: {{ .Values.ragDatabase.port }}
+
+# This will need a configured service account to pull from ECR
+# ADD THAT IN

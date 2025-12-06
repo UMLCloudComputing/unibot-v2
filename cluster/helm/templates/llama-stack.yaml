@@ -22,6 +22,9 @@ spec:
         ports:
         - containerPort: {{ .Values.llamaStack.port }} 
         resources: {{ toYaml .Values.llamaStack.resources | nindent 10 }}
+        env:
+            - name: LLAMA_STACK_PORT
+              value: "8000"
       volumes:
       - name: config
         configMap:
@@ -35,16 +38,13 @@ data:
   config.yaml: |
     model:
       backend: llamacpp
-      endpoint: {{ .Values.llamaStack.config.modelEndpoint }}  
+      endpoint: http://{{ .Values.model.name }}:{{ .Values.model.port }}  
 
     vector_store:
-      type: qdrant
-      host: {{ .Values.llamaStack.config.vectorHost }} 
-      port: {{ .Values.llamaStack.config.vectorPort }} 
-    
-    ui:
-      enabled: true
-      bind: "0.0.0.0:3000" 
+      provider: qdrant
+      qdrant:
+        url: http://{{ .Values.ragDatabase.name }}:{{ .Values.ragDatabase.port }}
+        collection_name: {{ .Values.ragDatabase.collectionName }}
 ---
 apiVersion: v1
 kind: Service
@@ -55,16 +55,4 @@ spec:
         app: llama-stack
     ports:
     - port: {{ .Values.llamaStack.port }}
-      targetPort: {{{ .Values.llamaStack.port }}
---- 
-apiVersion: v1
-kind: Service
-metadata:
-    name: llama-stack-ui
-spec:
-    type: LoadBalancer
-    selector:
-        app: llama-stack
-    ports:
-    - port: 3000
-      targetPort: 3000
+      targetPort: {{ .Values.llamaStack.port }}
