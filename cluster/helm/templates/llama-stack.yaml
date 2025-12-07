@@ -129,8 +129,7 @@ data:
       - provider_id: llamacpp
         provider_type: remote::llama-openai-compat
         config:
-          openai_compat_api_base: http://model.default.svc.cluster.local:8080/v1/
-          refresh_models: true
+          openai_compat_api_base: http://model.default.svc.cluster.local:8080/v1
           api_key: ""
       vector_io:
       - provider_id: faiss
