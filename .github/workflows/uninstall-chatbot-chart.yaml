@@ -1,5 +1,5 @@
-name: Deploy Gemma3 Model
-
+name: Uninstall University Chatbot Helm Chart
+run-name: ${{ github.actor }} is uninstalling the university chatbot helm chart
 on:
   workflow_dispatch: {}
 
@@ -12,7 +12,13 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
+   
+      - name: Install Helm 
+        shell: bash
+        run: |
+           # LIVING ON THE EDGE
+           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 | bash
+    
       - name: Login to AWS CLI
         uses: aws-actions/configure-aws-credentials@main
         with:
@@ -25,6 +31,7 @@ jobs:
             --name gcp \
             --region us-east-1
 
-      - name: Apply Deployment
-        run: kubectl apply -f cluster/eks/ramalama.yaml
+      - name: Uninstall Application Chart
+        run: |
+           helm uninstall uni-chatbot --wait
 

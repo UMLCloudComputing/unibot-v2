@@ -1,0 +1,37 @@
+name: Install University Chatbot Helm Chart
+run-name: ${{ github.actor }} is installing the university chatbot helm chart
+on:
+  workflow_dispatch: {}
+
+permissions:
+    id-token: write
+    contents: read
+jobs:
+  run-rag-builder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+    
+      - name: Install Helm 
+        shell: bash
+        run: |
+           # LIVING ON THE EDGE
+           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 | bash
+           
+      - name: Login to AWS CLI
+        uses: aws-actions/configure-aws-credentials@main
+        with:
+          role-to-assume: arn:aws:iam::620339869704:role/gcp-github-oidc-trust-policy 
+          aws-region: us-east-1
+
+      - name: Update Kubeconfig for EKS
+        run: |
+          aws eks update-kubeconfig \
+            --name gcp \
+            --region us-east-1
+
+      - name: Install Application Chart
+        run: |
+           helm install uni-chatbot ./cluster/helm --wait
+
