@@ -15,7 +15,7 @@ spec:
     spec:
       initContainers:
       - name: preload-db
-        image: ghcr.io/oras-project/oras:latest
+        image: ghcr.io/oras-project/oras:main
         command:
         - sh
         - -c
