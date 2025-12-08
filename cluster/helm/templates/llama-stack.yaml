@@ -77,8 +77,8 @@ data:
     registered_resources:
       models:
       - provider_id: ollama
-        model_id: "ollama/gemma3:12b"
-        provider_model_id: "gemma3:12b"
+        model_id: "ollama/gpt-oss:latest"
+        provider_model_id: "gpt-oss:latest"
       shields: []
       vector_dbs: []
       datasets: []

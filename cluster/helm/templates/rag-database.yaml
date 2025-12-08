@@ -15,15 +15,30 @@ spec:
     spec:
       initContainers:
       - name: preload-db
-        image: ghcr.io/oras-project/oras:main
+        image: public.ecr.aws/docker/library/alpine:latest
         command:
         - sh
         - -c
-        - | 
+        - |
+          apk add --no-cache aws-cli curl tar
+          curl -LO https://github.com/oras-project/oras/releases/latest/download/oras_1.3.0_linux_amd64.tar.gz
+          tar -xvf oras_1.3.0_linux_amd64.tar.gz -C /usr/local/bin oras
+          echo "Logging into ECR..."
+          aws ecr get-login-password --region $AWS_REGION \
+            | oras login --username AWS --password-stdin $ECR_REGISTRY
           echo "Pulling OCI artifact..."
           oras pull {{ .Values.ragDatabase.image }} -o /tmp/db
-          echo "Copying to PVC"
-          cp -a /tmp/db/. /qdrant-storage/
+          ls
+          ls tmp
+          ls tmp/db
+          echo "Copying to PVC..."
+          cp -a /tmp/db/. /qdrant/
+        env:
+        - name: AWS_REGION
+          value: "us-east-1"
+        - name: ECR_REGISTRY
+          value: "620339869704.dkr.ecr.us-east-1.amazonaws.com"
+        - name: RAG_DB_IMAGE
       serviceAccountName: my-service-account 
       containers:
       - name: {{ .Values.ragDatabase.name }}
