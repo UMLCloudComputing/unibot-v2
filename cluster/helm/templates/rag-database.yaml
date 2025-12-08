@@ -13,24 +13,19 @@ spec:
         labels:
             app: {{ .Values.ragDatabase.name }}
     spec:
-#      - name: copy-data
-#        image: docker.io/alpine:latest
-#        command: ["sh", "-c", "cp -a /data/. /qdrant/"]
-#        volumeMounts:
-#            - name: qdrant-storage
-#              mountPath: /qdrant
-#            - name: database
-#              mountPath: /data   
+      initContainers:
+      - name: preload-db
+        image: ghcr.io/oras-project/oras:latest
+        command:
+        - sh
+        - -c
+        - | 
+          echo "Pulling OCI artifact..."
+          oras pull {{ .Values.ragDatabase.image }} -o /tmp/db
+          echo "Copying to PVC"
+          cp -a /tmp/db/. /qdrant-storage/
       serviceAccountName: my-service-account 
       containers:
-      - name: copy-data
-        image: docker.io/alpine:latest
-        command: ["sh"]
-        volumeMounts:
-            - name: qdrant-storage
-              mountPath: /qdrant
-            - name: database
-              mountPath: /data
       - name: {{ .Values.ragDatabase.name }}
         image: qdrant/qdrant:latest 
         ports:
