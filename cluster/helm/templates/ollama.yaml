@@ -31,7 +31,7 @@ spec:
                 [
                   "sh",
                   "-c",
-                  "ollama pull gemma3"
+                  "ollama pull gpt-oss:latest"
                 ]
       volumes:
         - name: ollama-data
