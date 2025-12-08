@@ -3,7 +3,7 @@ model:
   image: rlcr.io/ramalama/gemma-3-4b-it:llamacpp-cuda
   replicaCount: 1
   port: 8080
-  gpuCount: 1
+  gpuCount: 0
   resources: {}
 
 llamaStack:
