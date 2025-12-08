@@ -13,21 +13,35 @@ spec:
         labels:
             app: {{ .Values.ragDatabase.name }}
     spec:
-      initContainers:
+#      - name: copy-data
+#        image: docker.io/alpine:latest
+#        command: ["sh", "-c", "cp -a /data/. /qdrant/"]
+#        volumeMounts:
+#            - name: qdrant-storage
+#              mountPath: /qdrant
+#            - name: database
+#              mountPath: /data   
+      containers:
       - name: copy-data
-        image: {{ .Values.ragDatabase.image }}
-        command: ["sh", "-c", "cp -a /data/. /qdrant/"]
+        image: docker.io/alpine:latest
+        command: ["sh", "-c", "cp -a /data/. /qdrant/", "&&", "sleep", "infinity"]
         volumeMounts:
             - name: qdrant-storage
-              mountPath: /qdrant 
-      containers:
+              mountPath: /qdrant
+            - name: database
+              mountPath: /data
       - name: {{ .Values.ragDatabase.name }}
         image: qdrant/qdrant:latest 
         ports:
         - containerPort: {{ .Values.ragDatabase.port }} 
         volumeMounts:
-        - name: qdrant-storage
-          mountPath: /qdrant/storage
+        - name: database
+          mountPath: /rag-db
+      volumes:
+        - image:
+            reference: {{ .Values.ragDatabase.image }}
+            pullPolicy: Always
+          name: database
   volumeClaimTemplates:
   - metadata:
       name: qdrant-storage 
