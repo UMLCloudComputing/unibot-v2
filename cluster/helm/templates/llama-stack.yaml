@@ -69,7 +69,8 @@ data:
       models:
       - provider_id: ollama
         model_id: "ollama/gemma3:latest"
-        provider_model_id: "gemma3:latest"
+        provider_resource_id: "gemma3:latest"
+        model_type: llm
       shields: []
       vector_dbs: []
       datasets: []
