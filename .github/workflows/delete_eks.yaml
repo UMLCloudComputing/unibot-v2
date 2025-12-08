@@ -46,4 +46,4 @@ jobs:
       - name: Destroy cluster with eksctl
         shell: bash
         run: |
-          eksctl delete cluster --name gcp-2 --disable-nodegroup-eviction --force
+          eksctl delete cluster --name gcp --disable-nodegroup-eviction --force
