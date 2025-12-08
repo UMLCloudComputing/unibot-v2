@@ -24,6 +24,8 @@ spec:
               value: "none"
             - name: ENABLE_PERSISTENT_CONFIG
               value: "false"
+            - name: WEBAUI_AUTH
+              value: "False"
 ---
 apiVersion: v1
 kind: Service

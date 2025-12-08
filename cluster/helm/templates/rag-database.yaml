@@ -13,6 +13,13 @@ spec:
         labels:
             app: {{ .Values.ragDatabase.name }}
     spec:
+      initContainers:
+      - name: copy-data
+        image: {{ .Values.ragDatabase.image }}
+        command: ["sh", "-c", "cp -a /data/. /qdrant/"]
+        volumeMounts:
+            - name: qdrant-storage
+              mountPath: /qdrant 
       containers:
       - name: {{ .Values.ragDatabase.name }}
         image: qdrant/qdrant:latest 
@@ -21,11 +28,14 @@ spec:
         volumeMounts:
         - name: qdrant-storage
           mountPath: /qdrant/storage
-      volumes:
-      - name: qdrant-storage 
-        image:
-          reference: {{ .Values.ragDatabase.image }}
-          pullPolicy: Always
+      volumeClaimTemplates:
+      - metadata:
+            name: qdrant-storage 
+      - spec: 
+            accessModes: [ReadWriteOnce]
+            resources:
+                requests:
+                    storage: 10Gi
 ---
 apiVersion: v1
 kind: Service
