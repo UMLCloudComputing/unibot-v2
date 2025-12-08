@@ -21,10 +21,11 @@ spec:
 #              mountPath: /qdrant
 #            - name: database
 #              mountPath: /data   
+      serviceAccountName: my-service-account 
       containers:
       - name: copy-data
         image: docker.io/alpine:latest
-        command: ["sh", "-c", "cp -a /data/. /qdrant/", "&&", "sleep", "infinity"]
+        command: ["sh"]
         volumeMounts:
             - name: qdrant-storage
               mountPath: /qdrant
