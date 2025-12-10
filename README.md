@@ -2,25 +2,24 @@
 
 ## ❓ What
 A University Chatbot for the [University of Massachusetts Lowell](https://uml.edu) that can answer a variety of questions about the university. <br/>
-It uses RAG to index and vectorized data from UML's websites to query against for information. <br/>
-The model and RAG DB management is performed using containers as the underlying technologies. Specifically through [Ramalama](https://github.com/containers/ramalama)
-
 
 ## 👨‍💻 Technologies
 - [Ramalama](https://github.com/containers/ramalama)
 - [Retrieval Augmentation Generation](https://en.wikipedia.org/wiki/Retrieval-augmented_generation)
-- [AWS EKS](https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html)
 - [AWS ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html) OCI Compliant Registry
-- [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/home.html)(Managed)
-- [AWS EC2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html)
-- [GitHub Actions](https://docs.github.com/en/actions) CI/CD
-
+- [GitHub Actions](https://docs.github.com/en/actions) CI
+- "Kubhanetes" and Containers
+- [Ollama](https://ollama.com/)
+- [Llama Stack](https://github.com/llamastack/llama-stack)
+- [Qdrant](https://qdrant.tech/)
 
 ## ➰ Workflow
+Divided deployment on Kubernetes and on VM.
+Model runs on directly on VM and exposes an OpenAI API endpoint to call.
+LLama-Stack and Qdrant run within a Kubernetes cluster. 
+RAG Database container image is attached to Qdrant within the cluster.
 
-### Main Deployment
-Ramalama deployed on AWS EKS (managed Kubernetes). 
-...
+![Current ad-hoc diagram](./images/ad-hoc-diagram.jpg)
 
 ### RAG
 1. `rag-runner` container image hosted on `gcp-rag-runner` ECR repo. Builds and uploads RAG database image.
@@ -34,5 +33,3 @@ Ramalama deployed on AWS EKS (managed Kubernetes).
 ## 🗫 Members
 - Gurpreet Singh
 - Nick Bottari
-- Roshan Rajesh
-- Nicolas Busse
