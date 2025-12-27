@@ -1,0 +1,3 @@
+creation_rules:
+    - path_regex: ^talos/(.*\.yaml|talosconfig)$
+      kms: 'arn:aws:kms:us-east-1:840414111995:key/a229d2f8-1f43-4f80-bddd-10a11e3d7587' 
