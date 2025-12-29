@@ -19,7 +19,7 @@ Model runs on directly on VM and exposes an OpenAI API endpoint to call.
 LLama-Stack and Qdrant run within a Kubernetes cluster. 
 RAG Database container image is attached to Qdrant within the cluster.
 
-![Current ad-hoc diagram](./images/ad-hoc-diagram.jpg)
+![Simplified Design](./images/unibot-simplified-design.png)
 
 ### RAG
 1. `rag-runner` container image hosted on `gcp-rag-runner` ECR repo. Builds and uploads RAG database image.
