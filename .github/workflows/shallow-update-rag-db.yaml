@@ -1,0 +1,26 @@
+jobs:
+    update-rag-db:
+        runs-on: arc-runner-set
+        steps: 
+            - uses: actions/checkout@v4
+              with: 
+                fetch-depth: 2 # Required to compare against previous commit
+              
+            - name: Process links 
+              id: get_links
+              run: | 
+                # Get new links and save to file
+                git diff -U) HEAD^ HEAD links.txt | grep '^\+' | grep -v '^\+\+\+' | sed 's/^\+//' > new_links.txt
+               
+                # Get deleted links 
+                git diff -U0 HEAD^ HEAD links.txt | grep '^-' | grep -v '^---' | sed 's/^-//' > deleted_links.txt
+
+            # Requires source_url to be a VarChar field that is indexed within the Milvus Collection Schema               
+            - name: Process Deletions
+              if: hashFiles('deleted_links.txt') != ''
+              run: python3 delete_data.py --file deleted_links.txt
+
+            - name: Process Additions
+              if: hashFiles('new_links.txt')  != ''
+              run: python3 process_new_data.py --file added.txt 
+
