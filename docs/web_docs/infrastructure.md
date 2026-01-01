@@ -10,7 +10,7 @@ The Kubernetes cluster is running through two nodes via [Talos](https://www.talo
 - Master Node: 1
 - Worker Node: 1
 
-It manages deployments for Open WebUI, Llama Stack, and the Milivus DB.
+It manages deployments for Open WebUI, Llama Stack, and the Milvus DB.
 
 ## Terraform on Proxmox 
 The VMs for the cluster and the model are provisioned through Terraform via the `merrimack-terraform` repository. This respository also contains provisioning specs for other projects and leverages CI/CD.

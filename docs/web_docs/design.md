@@ -20,7 +20,7 @@ Internally, this technology performs an operation called vectorization on the da
 ### Database details 
 [Docling](https://github.com/docling-project/docling) is the document parser and vectorizer. 
 
-[Milivus](https://github.com/milvus-io/milvus) is the vector database engine that powers the query lookups and responses. 
+[Milvus](https://github.com/milvus-io/milvus) is the vector database engine that powers the query lookups and responses. 
 
 ## UI ✨
 [Open WebUI](https://github.com/open-webui/open-webui) is the UI provider that operates through the OpenAI API or Ollama API standards.
