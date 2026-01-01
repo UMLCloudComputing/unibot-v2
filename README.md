@@ -9,7 +9,7 @@ A University Chatbot for the [University of Massachusetts Lowell](https://uml.ed
 - "Kubhanetes" and Containers
 - [Ollama](https://ollama.com/)
 - [Llama Stack](https://github.com/llamastack/llama-stack)
-- [Milivus](https://github.com/milvus-io/milvus)
+- [Milvus](https://github.com/milvus-io/milvus)
 
 ## ➰ Workflow
 Divided deployment on Kubernetes and on VM.
