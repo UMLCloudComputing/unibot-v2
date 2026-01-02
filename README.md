@@ -17,7 +17,15 @@ Model runs on directly on VM and exposes an OpenAI API endpoint to call.
 LLama-Stack and Qdrant run within a Kubernetes cluster. 
 RAG Database container image is attached to Qdrant within the cluster.
 
+
+### General
 ![Simplified Design](./images/unibot-simplified-design.png)
+
+### Database Builing Pipeline
+![Database Pipeline](./images/database-pipeline.png)
+Database Pipeline I runs immediately when a change is made to `links.txt` to update the database. It only handles URL level changes (add, remove, update). It does not automatically update changes in content on existing URLs. 
+
+Database Pipeline II runs periodically. It's purpose is to check for both URL changes as well as content changes on existing URLs by using the `contant_hash` to compare previous and current hashes. It's a much more expensive operation and hence runs periodically. 
 
 ## 🗫 Members
 - Gurpreet Singh
