@@ -6,7 +6,7 @@ A University Chatbot for the [University of Massachusetts Lowell](https://uml.ed
 ## 👨‍💻 Technologies
 - [Retrieval Augmentation Generation](https://en.wikipedia.org/wiki/Retrieval-augmented_generation)
 - [GitHub Actions](https://docs.github.com/en/actions) CI
-- "Kubhanetes" and Containers
+- [Kubernetes](https://github.com/kubernetes/kubernetes)
 - [Ollama](https://ollama.com/)
 - [Llama Stack](https://github.com/llamastack/llama-stack)
 - [Milvus](https://github.com/milvus-io/milvus)
@@ -14,8 +14,7 @@ A University Chatbot for the [University of Massachusetts Lowell](https://uml.ed
 ## ➰ Workflow
 Divided deployment on Kubernetes and on VM.
 Model runs on directly on VM and exposes an OpenAI API endpoint to call.
-LLama-Stack and Qdrant run within a Kubernetes cluster. 
-RAG Database container image is attached to Qdrant within the cluster.
+Llama-Stack and Milvus as deployed on the K8s cluster.
 
 
 ### General
