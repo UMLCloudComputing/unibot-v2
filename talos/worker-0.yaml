@@ -74,6 +74,7 @@ machine:
         #ENC[AES256_GCM,data:sU2P6UqcN8p7AUQEuzdpdcanhL8=,iv:jq7/w4+QPPJzzYf5AFdQtYs1P0KNVQHaXwj2/kcvLQU=,tag:TqvTKsrVyH/2f+1SdQTWuQ==,type:comment]
     #ENC[AES256_GCM,data:HvEbCRJFF21m+/bqlgjB0Kww6BkSmn/pX0yZN2TLigjvbf82bSzQawn9L60CV0WjfzI60fDZ5wec,iv:/8qpe6y0PU2DiD9c2KbnhtPW7IAUiqhcXk5+N/RvWco=,tag:fVK4k0fYaq4RdsH6FfQt2g==,type:comment]
     network:
+        hostname: ENC[AES256_GCM,data:IKkXs8gQ9FObMfca99Y5,iv:VtEyFUyqofthEXgjYPayfbfNtHhq2x2X1je1lmIsYZU=,tag:/ROb1FuEL6PyD+8Bo1PDYQ==,type:str]
         #ENC[AES256_GCM,data:VNtwoKvT7lGIsXEJL5azKePBamDYg4OqiJ3sWCunQ/WBMhVrD8CZnpG0QcvvARkTEDwUJ9ZeCUa/uEOG2irQUzn8oieDPg==,iv:M2hyHOQ82pGP000eS9LMgUkz234n0LPpUg4FTys1qdQ=,tag:ONuyMlwJkufQfOWMly+WFw==,type:comment]
         interfaces:
             - ENC[AES256_GCM,data:o3j+stf4hoy57UCEvlQmK40IBKU=,iv:uJv0shdBe4rDVJPrnOWRs9q5E6w20XTphlk3cebdXlo=,tag:0zHfhM9jfIxiBT0nYpxVvg==,type:comment]
@@ -543,7 +544,7 @@ sops:
           created_at: "2025-12-27T19:57:33Z"
           enc: AQICAHiggRvgenJG/wCbyhZBBuRQYmbnyfffJQ4RJaxIgrE9awHz9UA3VHB8E7wj9SIDrjAuAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMQbroLUJmkL25Yk8cAgEQgDsTLW7m22AZ5dcZaLydw2j9yiVO/rnBQ2Z98/MrzRzwmjdMw1CsnT9gugqmrHKykrWFoEVq1GkyK3cOUw==
           aws_profile: ""
-    lastmodified: "2026-01-01T02:31:37Z"
-    mac: ENC[AES256_GCM,data:DyFmLPBslfZsL1hwyv6AOMwynFfxmggR/p3ld4LR5usd5VlFr63HB/5dkyTOGy67miE53dmVfe8D2dxz3miXUU6FWoBY/1ZgS9YlvIJs/0jvlwps3npqE93dUPb7mwaiHvTF1Q2SeugOELVd2jIAaBQuRO/LOb9ubDEVqCojwCg=,iv:0cWlcgweMhEMTSiFPImNjbHlv8QHEI3fRnBbx4Di/4g=,tag:LzDM68XJx3RLCKedY/iF3g==,type:str]
+    lastmodified: "2026-01-03T20:41:42Z"
+    mac: ENC[AES256_GCM,data:iOLje5sSrdSL6nU3QREpJkDX3PWXessSuiGyg3uSXaqfenW98Wt0R24ybyKOM0qGdezgU/E1OQT2H/ksaIk7lr4L/loTCr1CL/muglm5cRawOWjeH8QQG3dPxz6ExykgyjMEMWpysl7pKtse6ekGZw29YhYiQOjNx/8gGNotaHI=,iv:o32oLV4rDW/qyD5NUtt/DOjtvjbdZyeRTuWtujD2HfI=,tag:rLtONKNGOJkGPUkBjWR8cw==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0
