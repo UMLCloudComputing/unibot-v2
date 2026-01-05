@@ -26,6 +26,8 @@ spec:
               value: "false"
             - name: WEBAUI_AUTH
               value: "False"
+            - name: DEFAULT_MODELS
+              value: "ollama/gemma3:latest"
 ---
 apiVersion: v1
 kind: Service
@@ -39,4 +41,4 @@ spec:
       port: 80
       targetPort: {{ .Values.openWebUi.containerPort }}
       name: http
-  type: LoadBalancer
+  type: NodePort

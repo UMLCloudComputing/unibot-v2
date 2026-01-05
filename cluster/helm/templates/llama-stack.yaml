@@ -45,7 +45,7 @@ data:
       - provider_id: ollama
         provider_type: remote::ollama
         config:
-          url: http://ollama.default.svc.cluster.local:11434
+          url: http://192.168.0.225:11434
       vector_io:
       - provider_id: http://qdrant:6333
         provider_type: remote::qdrant
@@ -77,8 +77,8 @@ data:
     registered_resources:
       models:
       - provider_id: ollama
-        model_id: "ollama/gpt-oss:latest"
-        provider_model_id: "gpt-oss:latest"
+        model_id: "ollama/gemma3:latest"
+        provider_model_id: "gemma3:latest"
       shields: []
       vector_dbs: []
       datasets: []
@@ -105,4 +105,4 @@ spec:
     ports:
     - port: {{ .Values.llamaStack.port }}
       targetPort: {{ .Values.llamaStack.port }}
-    type: LoadBalancer
+    type: ClusterIP
