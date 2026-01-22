@@ -1,0 +1,12 @@
+apiVersion: milvus.io/v1beta1
+kind: Milvus
+metadata: 
+    name: unibot-vector-db
+    labels:
+        app: milvus
+    namespace: milvus-db
+spec: 
+    mode: cluster
+    dependencies: {}
+    components: {}
+    config: {}
