@@ -18,16 +18,21 @@ spec:
           ports:
             - containerPort: {{ .Values.openWebUi.containerPort }}
           env:
-            - name: OPENAI_API_BASE_URL
-              value: {{ .Values.openWebUi.openAiApiBaseUrl }}
-            - name: OPENAI_API_KEY
-              value: "none"
+            - name: OLLAMA_BASE_URL
+              value: http://ollama-service.default.svc.cluster.local
             - name: ENABLE_PERSISTENT_CONFIG
               value: "false"
             - name: WEBAUI_AUTH
               value: "False"
-            - name: DEFAULT_MODELS
-              value: "ollama/gemma3:latest"
+            - name: ENABLE_EVALUATION_ARENA_MODELS
+              value: "False"
+#            - name: VECTOR_DB
+#              value: "milvus" 
+#            - name: RAG_EMBEDDING_ENGINE
+#              value: "ollama"
+#            - name: RAG_EMBEDDING_MODEL
+#              value: "nomic-embed-text"
+
 ---
 apiVersion: v1
 kind: Service
@@ -42,3 +47,23 @@ spec:
       targetPort: {{ .Values.openWebUi.containerPort }}
       name: http
   type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama-service
+spec:
+  ports: 
+    - port: 80 
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: ollama-service
+subsets:
+  - addresses:
+      - ip: {{ .Values.ollama.ipAddr }}
+    ports: 
+      - port: 11434 
+
