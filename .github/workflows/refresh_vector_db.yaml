@@ -1,0 +1,62 @@
+name: Refresh DB with ETL Pipeline
+on:
+    push: 
+        branches: [ main ]
+        paths: [ 'links.txt' ]
+
+# Avoid state locks
+concurrency:
+ group: db-etl-pipeline
+ cancel-in-progress: false
+    
+jobs:
+    db-etl-pipeline:
+        name: "Unibot Vector Database Refreshing/Building"
+        runs-on: unibot-runner-set # Specific to ARC installation on production cluster
+        env:
+            OLLAMA_BASE_URL: ${{ vars.OLLAMA_BASE_URL }}
+            DOCLING_BASE_URL: ${{ vars.DOCLING_BASE_URL }}
+            MILVUS_HOST: ${{ vars.MILVUS_HOST }}
+            MILVUS_PORT: ${{ vars.MILVUS_PORT }} 
+            COLLECTION_NAME: ${{ vars.COLLECTION_NAME }}
+            LOG_OUTPUT_PATH: ${{ vars.LOG_OUTPUT_PATH }}
+            URL_LIST_FILE: "../links.txt"
+            OP_FILES_PATH: ${{ vars.OP_FILES_PATH }}
+         
+        defaults:
+            run:
+                working-directory: ./rag-scripts
+        
+        steps:
+          - name: Checkout Code
+            uses: actions/checkout@v4
+            
+          - name: Setup Python
+            uses: actions/setup-python@v5
+            with:
+                python-version: '3.14'
+            
+          - name: Install dependencies
+            run: |
+                python3 -m pip install --upgrade pip
+                pip install pymilvus aiohttp httpx tqdm ollama
+            
+          - name: Synchronize Changes
+            run: |
+                python3 rag-sync-manager.py
+            
+          - name: Handle Deleted URLs
+            run: |
+                python3 delete-data.py
+            
+          - name: Handle New URLs
+            run: |
+                python3 add-data.py
+          
+          - name: Export Logs for Analysis
+            if: always()
+            uses: actions/upload-artifact@v4
+            with:
+                name: run-logs-${{ github.run_id }}
+                path: /home/runner/data/logs/ 
+                retention-days: 1 # Keep storage clean by deleting after 24 hours
