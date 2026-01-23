@@ -144,7 +144,7 @@ data:
             "nodePathMap":[
             {
                     "node":"DEFAULT_PATH_FOR_NON_LISTED_NODES",
-                    "paths":["/var/mnt/milivus-data"]
+                    "paths":["/var/mnt/milvus-data"]
             }
             ]
     }
