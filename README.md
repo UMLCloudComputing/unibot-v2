@@ -7,24 +7,23 @@ A University Chatbot for the [University of Massachusetts Lowell](https://uml.ed
 - [Retrieval Augmentation Generation](https://en.wikipedia.org/wiki/Retrieval-augmented_generation)
 - [GitHub Actions](https://docs.github.com/en/actions) CI
 - [Kubernetes](https://github.com/kubernetes/kubernetes)
-- [Ollama](https://ollama.com/)
-- [Llama Stack](https://github.com/llamastack/llama-stack)
+- [Ollama](https://github.com/ollama/ollama)
 - [Milvus](https://github.com/milvus-io/milvus)
+- [Open WebUI](https://github.com/open-webui/open-webui)
 
 ## ➰ Workflow
 Divided deployment on Kubernetes and on VM.
-Model runs on directly on VM and exposes an OpenAI API endpoint to call.
-Llama-Stack and Milvus as deployed on the K8s cluster.
-
+Inference model, embedding model, and docling chunker run directly on VM and expose an Ollama API endpoint and `docling-serve` API endpoint to call.
+Milvus is deployed on K8s as a cluster. 
+Open WebUI is currently deployed as part of a custom helm chart. 
 
 ### General
 ![Simplified Design](./images/unibot-simplified-design.png)
 
-### Database Builing Pipeline
+### Database Pipeline
 ![Database Pipeline](./images/database-pipeline.png)
-Database Pipeline I runs immediately when a change is made to `links.txt` to update the database. It only handles URL level changes (add, remove, update). It does not automatically update changes in content on existing URLs. 
 
-Database Pipeline II runs periodically. It's purpose is to check for both URL changes as well as content changes on existing URLs by using the `contant_hash` to compare previous and current hashes. It's a much more expensive operation and hence runs periodically. 
+The design is intended to be fast and scalable. It leverage asynchronous API calls, multi-threading and a producer-consumer approach with thread-safe queues. 
 
 ## 🗫 Members
 - Gurpreet Singh
