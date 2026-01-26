@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: milvus
+  labels:
+    # 'baseline' is usually sufficient for Milvus pods
+    pod-security.kubernetes.io/enforce: baseline

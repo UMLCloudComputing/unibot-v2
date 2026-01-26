@@ -1,0 +1,13 @@
+# The operator uses a webhook to validate Milvus resources.
+admissionWebhooks:
+  enabled: true
+  certManager:
+    enabled: true
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi

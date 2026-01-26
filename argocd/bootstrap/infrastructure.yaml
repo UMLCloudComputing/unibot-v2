@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infrastructure-stack
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/UMLCloudComputing/unibot-v2.git 
+    targetRevision: HEAD
+    path: argocd/infrastructure/  # Points to the folder containing Longhorn/Cert-Manager
+    directory:
+      recurse: true        # Tells ArgoCD to look into subdirectories
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd      # The parent app usually lives in the argocd namespace
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

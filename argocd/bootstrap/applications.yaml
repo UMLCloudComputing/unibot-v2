@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: milvus-stack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
+    targetRevision: HEAD
+    path: argocd/milvus-stack/   # Points to the folder with Operator and Cluster CRDs
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: milvus      # You can specify a dedicated namespace for the DB
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true # Automatically creates the 'milvus' namespace

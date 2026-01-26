@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: longhorn-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1" # Lower number = installs first
+spec:
+  source:
+    chart: longhorn
+    repoURL: https://charts.longhorn.io
+    targetRevision: 1.5.x
+    helm:
+      values: |
+        persistence:
+          defaultClass: true

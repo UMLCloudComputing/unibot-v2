@@ -1,0 +1,32 @@
+apiVersion: milvus.io/v1beta1
+kind: Milvus
+metadata:
+  name: my-milvus-db
+  namespace: milvus
+  annotations:
+    # Wave 3: Only starts once the Operator is ready to receive this order
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  mode: cluster 
+  dependencies:
+    storage:
+      external: false # Set to false to let the operator manage the PVCs
+      storageClass: "longhorn" # Must match the Longhorn StorageClass name
+      persistentVolumeEnabled: true
+      size: 50Gi
+  components:
+    image: milvusdb/milvus:v2.3.0
+    proxy:
+      serviceType: ClusterIP
+    # Resource limits are important on Talos to prevent node exhaustion
+    resources:
+      limits:
+        cpu: "1"
+        memory: 2Gi
+      requests:
+        cpu: "0.5"
+        memory: 1Gi
+  config:
+    # Optional: Custom Milvus configurations
+    common:
+      storageType: minio # Default internal storage manager
