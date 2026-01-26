@@ -7,6 +7,7 @@ A University Chatbot for the [University of Massachusetts Lowell](https://uml.ed
 - [Retrieval Augmentation Generation](https://en.wikipedia.org/wiki/Retrieval-augmented_generation)
 - [GitHub Actions](https://docs.github.com/en/actions) CI
 - [Kubernetes](https://github.com/kubernetes/kubernetes)
+- [Longhorn](https://github.com/longhorn/longhorn)
 - [Ollama](https://github.com/ollama/ollama)
 - [Milvus](https://github.com/milvus-io/milvus)
 - [Open WebUI](https://github.com/open-webui/open-webui)
