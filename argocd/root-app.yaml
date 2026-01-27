@@ -9,7 +9,12 @@ spec:
         repoUrl: https://github.com/UMLCloudComputing/unibot-v2.git
         targetRevision: HEAD
         path: argocd/apps 
+    destination: 
+        server: https://kubernetes.default.svc
+        namespace: unibot-stack
     syncPolicy:
+        syncOptions:
+            - CreateNamespace=true
         automated:
             prune: true
             selfHeal: true
