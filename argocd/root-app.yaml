@@ -9,6 +9,8 @@ spec:
         repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
         targetRevision: HEAD
         path: argocd/apps 
+    directory:
+        rescurse: true
     destination: 
         server: https://kubernetes.default.svc
         namespace: unibot-management
