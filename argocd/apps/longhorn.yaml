@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: longhorn-system
+  namespace: argocd 
+  annotations:
+    argocd.argoproj.io/sync-wave: "1" 
+  finalizers:
+    - resources-finalizers.argocd.argoproj.io 
+spec:
+  source:
+    chart: longhorn
+    repoURL: https://charts.longhorn.io
+    targetRevision: 1.5.x
+    helm:
+      values: |
+        persistence:
+          defaultClass: true
+        defaultSettings:
+            defaultDataPath: /var/lib/longhorn
+            storageReservedPercentageForDefaultDataPath: 15
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+ 
+--- 
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: longhorn-system
+    labels:
+        pod-security.kubernetes.io/enforce: privileged

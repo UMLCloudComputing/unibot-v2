@@ -4,7 +4,7 @@ metadata:
   name: milvus-operator
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   project: default
   source:
@@ -12,8 +12,18 @@ spec:
     chart: milvus-operator
     targetRevision: 0.9.x # Use the latest stable version
     helm:
-      valueFiles:
-        - values.yaml
+        values: |
+            admissionWebhooks:
+                enabled: true
+                certManager:
+                    enabled: true
+            resources:
+                limits:
+                    cpu: 200m
+                    memory: 512Mi
+                requests:
+                    cpu: 100m
+                    memory: 256Mi 
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: milvus-operator

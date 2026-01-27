@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: Unibot-stack
+    namespace: argocd
+spec:
+    project: default
+    source:
+        repoUrl: https://github.com/UMLCloudComputing/unibot-v2.git
+        targetRevision: HEAD
+        path: argocd/apps 
+    syncPolicy:
+        automated:
+            prune: true
+            selfHeal: true
+

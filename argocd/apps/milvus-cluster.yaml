@@ -1,11 +1,11 @@
 apiVersion: milvus.io/v1beta1
 kind: Milvus
 metadata:
-  name: my-milvus-db
+  name: milvus-db
   namespace: milvus
   annotations:
     # Wave 3: Only starts once the Operator is ready to receive this order
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   mode: cluster 
   dependencies:

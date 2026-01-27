@@ -1,3 +1,0 @@
-defaultSettings:
-    defaultDataPath: /var/lib/longhorn
-    storageReservedPercentageForDefaultDataPath: 15

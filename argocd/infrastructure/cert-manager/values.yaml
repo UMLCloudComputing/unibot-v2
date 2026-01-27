@@ -1,6 +1,0 @@
-installCRDs: true
-replicaCount: 2
-resources:
-    requests:
-        cpu: 10m
-        memory: 32Mi
