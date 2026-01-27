@@ -31,7 +31,7 @@ spec:
     common:
       storageType: minio # Default internal storage manager
   destination:
-    server: https://kubernetes.default.svc
+    name: admin@unibot-cluster
     namespace: milvus-cluster
   syncPolicy:
     syncOptions:

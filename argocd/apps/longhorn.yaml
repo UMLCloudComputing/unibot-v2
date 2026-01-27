@@ -20,7 +20,7 @@ spec:
             defaultDataPath: /var/lib/longhorn
             storageReservedPercentageForDefaultDataPath: 15
   destination:
-    server: https://kubernetes.default.svc
+    name: admin@unibot-cluster
     namespace: longhorn-system 
   syncPolicy:
     syncOptions:

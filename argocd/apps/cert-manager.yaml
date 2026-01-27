@@ -25,7 +25,7 @@ spec:
         - name: installCRDs
           value: "true" # Critical: Cert-Manager needs its CRDs to function
   destination:
-    server: 'https://kubernetes.default.svc'
+    name: admin@unibot-cluster
     namespace: cert-manager
   syncPolicy:
     automated:
