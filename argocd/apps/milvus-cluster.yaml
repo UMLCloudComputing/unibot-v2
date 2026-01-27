@@ -2,7 +2,7 @@ apiVersion: milvus.io/v1beta1
 kind: Milvus
 metadata:
   name: milvus-cluster
-  namespace: unibot-management
+  namespace: argocd
   annotations:
     # Wave 3: Only starts once the Operator is ready to receive this order
     argocd.argoproj.io/sync-wave: "3"

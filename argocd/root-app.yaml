@@ -2,17 +2,19 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
     name: unibot-stack
+    namespace: argocd
 spec:
     project: default
     source:
         repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
         targetRevision: HEAD
+        target: main
         path: argocd/apps 
     directory:
         recurse: true
     destination: 
-        server: https://kubernetes.default.svc
-        namespace: unibot-management
+        name: in-cluster 
+        namespace: argocd
     syncPolicy:
         syncOptions:
             - CreateNamespace=true
