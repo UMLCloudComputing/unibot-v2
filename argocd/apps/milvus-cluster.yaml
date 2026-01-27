@@ -1,8 +1,8 @@
 apiVersion: milvus.io/v1beta1
 kind: Milvus
 metadata:
-  name: milvus-db
-  namespace: milvus
+  name: milvus-cluster
+  namespace: unibot-management
   annotations:
     # Wave 3: Only starts once the Operator is ready to receive this order
     argocd.argoproj.io/sync-wave: "3"
@@ -30,3 +30,12 @@ spec:
     # Optional: Custom Milvus configurations
     common:
       storageType: minio # Default internal storage manager
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: milvus-cluster
+  syncPolicy:
+    syncOptions:
+        - CreateNamespace=true
+    automated:
+       selfHeal: true 
+     
