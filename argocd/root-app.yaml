@@ -6,7 +6,7 @@ metadata:
 spec:
     project: default
     source:
-        repoUrl: https://github.com/UMLCloudComputing/unibot-v2.git
+        repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
         targetRevision: HEAD
         path: argocd/apps 
     destination: 
