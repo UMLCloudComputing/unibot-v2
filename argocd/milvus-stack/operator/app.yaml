@@ -4,7 +4,7 @@ metadata:
   name: milvus-operator
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "2" # Larger number = later install
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
   source:

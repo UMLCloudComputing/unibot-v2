@@ -5,7 +5,7 @@ metadata:
   namespace: milvus
   annotations:
     # Wave 3: Only starts once the Operator is ready to receive this order
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   mode: cluster 
   dependencies:

@@ -2,8 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: longhorn-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "1" # Lower number = installs first
+  namespace: argocd 
 spec:
   source:
     chart: longhorn
