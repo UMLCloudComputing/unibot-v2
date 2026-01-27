@@ -8,12 +8,11 @@ spec:
     source:
         repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
         targetRevision: HEAD
-        target: main
         path: argocd/apps 
-    directory:
-        recurse: true
+        directory: 
+            recurse: true
     destination: 
-        name: https://kubernetes.default.svc
+        name: admin@unibot-cluster
         namespace: argocd
     syncPolicy:
         syncOptions:
