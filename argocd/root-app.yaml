@@ -2,7 +2,6 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
     name: unibot-stack
-    namespace: argocd
 spec:
     project: default
     source:
@@ -10,7 +9,7 @@ spec:
         targetRevision: HEAD
         path: argocd/apps 
     directory:
-        rescurse: true
+        recurse: true
     destination: 
         server: https://kubernetes.default.svc
         namespace: unibot-management
