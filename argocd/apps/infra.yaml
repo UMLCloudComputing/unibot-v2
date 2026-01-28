@@ -1,15 +1,17 @@
-apiVersion: argoproj.io/v1alpha1
+apiVerion: argoproj.io/v1alpha
 kind: Application
 metadata:
-    name: unibot-stack
+    name: unibot-infra
     namespace: argocd
+    annotations:
+        argocd.argoproj.io/sync-wave: "-10"
 spec:
     project: default
     source:
         repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
         targetRevision: HEAD
-        path: argocd/apps
-    destination: 
+        path: argocd/apps/infrastructure
+    destination:
         name: admin@unibot-cluster
         namespace: argocd
     syncPolicy:
@@ -18,5 +20,4 @@ spec:
         automated:
             prune: true
             selfHeal: true
-            allowEmpty: true
-
+            allowEmpty: true 

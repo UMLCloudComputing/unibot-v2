@@ -3,9 +3,6 @@ kind: Milvus
 metadata:
   name: milvus-cluster
   namespace: argocd
-  annotations:
-    # Wave 3: Only starts once the Operator is ready to receive this order
-    argocd.argoproj.io/sync-wave: "-7"
 spec:
   mode: cluster 
   dependencies:
