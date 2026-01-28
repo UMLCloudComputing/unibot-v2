@@ -9,6 +9,7 @@ metadata:
   finalizers:
     - resources-finalizers.argocd.argoproj.io 
 spec:
+  project: default
   source:
     chart: longhorn
     repoURL: https://charts.longhorn.io
@@ -20,7 +21,6 @@ spec:
         defaultSettings:
             defaultDataPath: /var/lib/longhorn
             storageReservedPercentageForDefaultDataPath: 15
-    project: default
   destination:
     name: admin@unibot-cluster
     namespace: longhorn-system 
