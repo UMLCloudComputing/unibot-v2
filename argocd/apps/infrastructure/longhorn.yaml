@@ -3,9 +3,6 @@ kind: Application
 metadata:
   name: longhorn
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "-10"
-    argocd.argoproj.io/hook: PreSync
   finalizers:
     - resources-finalizers.argocd.argoproj.io 
 spec:
@@ -25,7 +22,7 @@ spec:
             jobEnabled: false   # This conflicts with ArgoCD. Chicken/Egg problem.
   destination:
     name: admin@unibot-cluster
-    namespace: longhorn-system 
+    namespace: longhorn 
   syncPolicy:
     syncOptions:
         - CreateNamespace=true
