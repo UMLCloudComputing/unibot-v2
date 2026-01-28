@@ -21,6 +21,8 @@ spec:
         defaultSettings:
             defaultDataPath: /var/lib/longhorn
             storageReservedPercentageForDefaultDataPath: 15
+        preUpgradeChecker:
+            jobEnabled: false   # This conflicts with ArgoCD. Chicken/Egg problem.
   destination:
     name: admin@unibot-cluster
     namespace: longhorn-system 
