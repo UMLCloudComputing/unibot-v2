@@ -19,6 +19,7 @@ spec:
         defaultSettings:
             defaultDataPath: /var/lib/longhorn
             storageReservedPercentageForDefaultDataPath: 15
+    project: default
   destination:
     name: admin@unibot-cluster
     namespace: longhorn-system 
