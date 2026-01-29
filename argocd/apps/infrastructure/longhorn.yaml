@@ -14,19 +14,18 @@ spec:
         persistence:
           defaultClass: true
         defaultSettings:
-            defaultDataPath: /var/lib/longhorn
-            storageReservedPercentageForDefaultDataPath: 15
+          defaultDataPath: /var/lib/longhorn
+          storageReservedPercentageForDefaultDataPath: 15
         preUpgradeChecker:
-            jobEnabled: false   # This conflicts with ArgoCD. Chicken/Egg problem.
+          jobEnabled: false
+        upgradeVersionCheck: false
   destination:
-    name: admin@unibot-cluster
-    namespace: longhorn 
+    server: https://kubernetes.default.svc 
+    namespace: longhorn-system 
   syncPolicy:
     syncOptions:
         - CreateNamespace=true
+        - SkipDryRunOnMissingResource=true
     automated:
         prune: true
         selfHeal: true
-    managedNameSpaceMetadata:
-        labels:
-            pod-security.kubernetes.io/enfore: privileged

@@ -23,7 +23,7 @@ spec:
                     cpu: 100m
                     memory: 256Mi 
   destination:
-    name: admin@unibot-cluster
+    server: https://kubernetes.default.svc
     namespace: milvus-operator
   syncPolicy:
     automated:
