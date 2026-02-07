@@ -1,0 +1,9 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-mayastor
+provisioner: io.openebs.csi-mayastor
+parameters:
+  repl: "3"      # Number of data replicas
+  protocol: nvmf # NVMe-over-Fabrics
+volumeBindingMode: Immediate

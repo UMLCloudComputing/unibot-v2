@@ -1,0 +1,19 @@
+apiVersion: "openebs.io/v1beta3"
+kind: DiskPool
+metadata:
+  name: pool-worker-0
+  namespace: openebs
+spec:
+  node: unibot-worker-0 # Must match 'kubectl get nodes' name
+  disks: 
+    - "uring:///dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1"
+---
+apiVersion: "openebs.io/v1beta3"
+kind: DiskPool
+metadata:
+  name: pool-worker-1
+  namespace: openebs
+spec:
+  node: unibot-worker-1 # Must match 'kubectl get nodes' name
+  disks: 
+    - "uring:///dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1"
