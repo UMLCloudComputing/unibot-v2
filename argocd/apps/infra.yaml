@@ -12,7 +12,7 @@ spec:
         targetRevision: main
         path: argocd/apps/infrastructure
     destination:
-        name: admin@unibot-cluster
+        server: https://kubernetes.default.svc
         namespace: argocd
     syncPolicy:
         syncOptions:
