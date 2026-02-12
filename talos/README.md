@@ -2,10 +2,11 @@
 `192.168.0.232`
 
 # Worker Node IP
-`192.169.2.3`
+`192.168.2.3`
+`192.168.1.104`
 
 # Get Kubeconfig
-`talosctl kubeconfig -e 192.168.0.232 -n 192.168.0.232 --talosconfig <(sops -d talosconfig)`
+`talosctl kubeconfig --talosconfig <(sops -d talosconfig)`
 # Operating on talos config files
 Files are secured using [`sops`](https://github.com/getsops/sops).
 Keys are stored on AWS KMS
