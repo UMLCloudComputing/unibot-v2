@@ -38,7 +38,7 @@ jobs:
           - name: Install dependencies
             run: |
                 python3 -m pip install --upgrade pip
-                pip install pymilvus aiohttp httpx tqdm ollama
+                pip install pymilvus aiohttp httpx tqdm ollama requests
             
           - name: Synchronize Changes
             run: |
