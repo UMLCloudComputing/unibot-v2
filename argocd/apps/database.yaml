@@ -6,13 +6,13 @@ metadata:
     annotations:
         argocd.argoproj.io/sync-wave: "10"
 spec:
-    project: default
+    project: unibot-v2
     source:
         repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
         targetRevision: HEAD
         path: argocd/apps/milvus-db
     destination:
-        name: admin@unibot-cluster
+        server: https://kubernetes.default.svc
         namespace: argocd
     syncPolicy:
         syncOptions:
