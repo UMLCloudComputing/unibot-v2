@@ -434,3 +434,4 @@ https://www.uml.edu/about/visit/campus/parking.aspx
 https://www.uml.edu/about/visit/lowell/lowell.aspx
 https://www.uml.edu/about/visit/stay/
 https://www.uml.edu/about/visit/train/
+https://www.uml.edu/academics/colleges.aspx
