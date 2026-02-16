@@ -1,39 +1,95 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: milvus-cluster
+    labels:
+        pod-security.kubernetes.io/enforce: baseline # Change if needed
+---
 apiVersion: milvus.io/v1beta1
 kind: Milvus
 metadata:
   name: milvus-cluster
-  namespace: argocd
+  namespace: milvus-cluster 
+  labels:
+    app: milvus
 spec:
-  mode: cluster 
-  dependencies:
-    storage:
-      external: false # Set to false to let the operator manage the PVCs
-      storageClass: "longhorn" # Must match the Longhorn StorageClass name
-      persistentVolumeEnabled: true
-      size: 50Gi
+  mode: cluster
   components:
-    image: milvusdb/milvus:v2.3.0
+    mixCoord:
+      replicas: 1
+      resources:
+        limits:
+          cpu: 1
+          memory: 2Gi
+    streamingNode:
+      replicas: 1
+      resources:
+        limits:
+          cpu: 1 
+          memory: 2Gi
     proxy:
-      serviceType: ClusterIP
-    # Resource limits are important on Talos to prevent node exhaustion
-    resources:
-      limits:
-        cpu: "1"
-        memory: 2Gi
-      requests:
-        cpu: "0.5"
-        memory: 1Gi
-  config:
-    # Optional: Custom Milvus configurations
-    common:
-      storageType: minio # Default internal storage manager
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: milvus-cluster
-  syncPolicy:
-    syncOptions:
-        - CreateNamespace=true
-        - SkipDryRunOnMissingResource=true
-    automated:
-       selfHeal: true 
-     
+      replicas: 1
+      resources:
+        limits:
+          cpu: 1
+          memory: 2Gi
+    queryNode:
+      replicas: 1
+      resources:
+        limits:
+          cpu: 1 
+          memory: 2Gi
+    dataNode:
+      replicas: 1
+      resources:
+        limits:
+          cpu: 1 
+          memory: 2Gi
+  config: {}
+  dependencies:
+
+    msgStreamType: woodpecker
+  
+    etcd:
+      inCluster:
+        values:
+          autoCompactionMode: revision
+          autoCompactionRetention: "1000"
+          extraEnvVars:
+          - name: ETCD_QUOTA_BACKEND_BYTES
+            value: "4294967296"
+          - name: ETCD_HEARTBEAT_INTERVAL
+            value: "500"
+          - name: ETCD_ELECTION_TIMEOUT
+            value: "25000"
+          - name: ETCD_SNAPSHOT_COUNT
+            value: "10000"
+          - name: ETCD_ENABLE_PPROF
+            value: "true"
+          persistence:
+            accessMode: ReadWriteOnce
+            enabled: true
+            size: 20Gi   #SSD Required
+            storageClass:
+          replicaCount: 2 
+          resources:
+            limits:
+              cpu: 1
+              memory: 1Gi
+            requests:
+              cpu: 1
+              memory: 1Gi
+    
+    storage:
+      inCluster:
+        values:
+          mode: distributed
+          resources:
+            limits:
+              cpu: 1
+              memory: 2Gi
+          persistence:
+            storageClass:
+            accessMode: ReadWriteOnce
+            size: 30Gi
+  
