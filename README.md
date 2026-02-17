@@ -11,6 +11,9 @@ A University Chatbot for the [University of Massachusetts Lowell](https://uml.ed
 - [Ollama](https://github.com/ollama/ollama)
 - [Milvus](https://github.com/milvus-io/milvus)
 - [Open WebUI](https://github.com/open-webui/open-webui)
+- [PostgreSQL](https://github.com/bitnami/charts/blob/main/bitnami/postgresql/README.md) on K8s
+- [Redis](https://github.com/bitnami/charts/blob/main/bitnami/redis/README.md) on K8s
+- [AWS SSM Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html) (later to migrate to on-prem Hashicorp Vault)
 
 ## ➰ Workflow
 Divided deployment on Kubernetes and on VM.
@@ -25,6 +28,16 @@ Open WebUI is currently deployed as part of a custom helm chart.
 ![Database Pipeline](./images/database-pipeline.png)
 
 The design is intended to be fast and scalable. It leverage asynchronous API calls, multi-threading and a producer-consumer approach with thread-safe queues. 
+
+## Todo 🏗️
+- [ ] Scale Open WebUI horizontally 
+    - [ ] Install PostgreSQL on K8s as ArgoCD app
+    - [ ] Install Redis on K8s as ArgoCD app
+    - [ ] Create PVC of persistent shared storage for Open WebUI replicas
+    - [ ] Configure and install Nginx load balancer on K8s as ArgoCD app
+
+Tangential:
+- [ ] Create a separate VM or K8s cluster and install Hashicorp Vault for on-prem key management 
 
 ## 🗫 Members
 - Gurpreet Singh
