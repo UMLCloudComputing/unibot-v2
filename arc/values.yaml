@@ -1,6 +1,9 @@
 githubConfigSecret: pre-defined-secret
 template:
   spec:
+    securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: "OnRootMismatch"
     containers:
       - name: runner
         image: ghcr.io/actions/actions-runner:latest
