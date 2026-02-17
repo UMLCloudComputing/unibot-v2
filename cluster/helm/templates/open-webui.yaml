@@ -1,7 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: open-webui
+    labels:
+        pod-security.kubernetes.io/enforce: baseline
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: open-webui
+  namespace: open-webui 
 spec:
   replicas: 1
   selector:
@@ -19,7 +27,7 @@ spec:
             - containerPort: {{ .Values.openWebUi.containerPort }}
           env:
             - name: OLLAMA_BASE_URL
-              value: http://ollama-service.default.svc.cluster.local
+              value: https://192.168.0.73:11434
             - name: ENABLE_PERSISTENT_CONFIG
               value: "false"
             - name: WEBAUI_AUTH
