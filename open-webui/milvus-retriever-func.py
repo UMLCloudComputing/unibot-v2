@@ -8,10 +8,10 @@ from pydantic import BaseModel, Field
 class Filter:
     class Valves(BaseModel):
         milvus_uri: str = Field(
-            default="http://standalone:19530", description="Milvus URI"
+            default="http://milvus-cluster-milvus.milvus-cluster.svc.cluster.local:19530", description="Milvus URI"
         )
         ollama_uri: str = Field(
-            default="http://192.168.0.245:11434", description="Ollama API URI"
+            default="http://192.168.0.73:11434", description="Ollama API URI"
         )
         collection_name: str = Field(
             default="docs", description="Specific collection to query"
