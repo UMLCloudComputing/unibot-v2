@@ -1,7 +1,0 @@
-apiVersion: v2
-name: Unibot-v2
-description: University Chatbot using llama-stack and Milvus
-type: application
-version: 2.0.0
-appVersion: "2.0.0"
-
