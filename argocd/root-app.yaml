@@ -12,6 +12,8 @@ spec:
         - 'https://charts.jetstack.io'
         - 'https://github.com/UMLCloudComputing/unibot-v2.git'
         - 'https://zilliztech.github.io/milvus-operator/'
+        - 'https://charts.bitnami.com/bitnami'
+        - 'bitnamilegacy/postgresql'
     destinations:
         - namespace: 'milvus-cluster'
           server: 'https://kubernetes.default.svc'
@@ -23,6 +25,8 @@ spec:
           server: 'https://kubernetes.default.svc' 
         - namespace: 'kube-system'
           server: 'https://kubernetes.default.svc' 
+        - namespace: 'postgresql'
+          server: 'https://kubernetes.default.svc'
     clusterResourceWhitelist:
         - group: '*'
           kind: '*' 
