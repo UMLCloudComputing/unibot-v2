@@ -10,7 +10,7 @@ spec:
     source:
         repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
         targetRevision: HEAD
-        path: argocd/apps/database
+        path: argocd/apps/databases
     destination:
         server: https://kubernetes.default.svc
         namespace: argocd
