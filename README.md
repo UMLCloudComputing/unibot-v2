@@ -13,7 +13,7 @@ A University Chatbot for the [University of Massachusetts Lowell](https://uml.ed
 - [Open WebUI](https://github.com/open-webui/open-webui)
 - [PostgreSQL](https://github.com/bitnami/charts/blob/main/bitnami/postgresql/README.md) on K8s
 - [Redis](https://github.com/bitnami/charts/blob/main/bitnami/redis/README.md) on K8s
-- [AWS SSM Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html) (later to migrate to on-prem Hashicorp Vault)
+- [AWS SSM Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html) 
 
 ## ➰ Workflow
 Divided deployment on Kubernetes and on VM.
@@ -31,13 +31,14 @@ The design is intended to be fast and scalable. It leverage asynchronous API cal
 
 ## Todo 🏗️
 - [ ] Scale Open WebUI horizontally 
-    - [ ] Install PostgreSQL on K8s as ArgoCD app
-    - [ ] Install Redis on K8s as ArgoCD app
-    - [ ] Create PVC of persistent shared storage for Open WebUI replicas
-    - [ ] Configure and install Nginx load balancer on K8s as ArgoCD app
+    - [x] Install PostgreSQL on K8s as ArgoCD app
+    - [x] Install Redis on K8s as ArgoCD app
+    - [x] Create PVC of persistent shared storage for Open WebUI replicas
+    - [ ] Configure and install Gateway API Controller and HTTPRoute on K8s as ArgoCD app
+- [ ] Update the docs on the website
 
 Tangential:
-- [ ] Create a separate VM or K8s cluster and install Hashicorp Vault for on-prem key management 
+- [ ] ~~Create a separate VM or K8s cluster and install Hashicorp Vault for on-prem key management ~~
 
 ## 🗫 Members
 - Gurpreet Singh
