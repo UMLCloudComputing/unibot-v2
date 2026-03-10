@@ -20,12 +20,6 @@ spec:
                         memory: "2Gi"
                   image: 
                     tag: latest 
-                  tls:
-                    enabled: true
-                    existingSecret: certificates-tls-secret
-                    certFilename: tls.crt
-                    certKeyFilename: tls.key
-                    certCAFilename: ca.crt
     destination:
         server: 'https://kubernetes.default.svc'
         namespace: redis 
