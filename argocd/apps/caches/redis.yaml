@@ -17,7 +17,7 @@ spec:
                   resources:
                     limits:
                       cpu: "1"
-                        memory: "2Gi"
+                      memory: "2Gi"
                   image: 
                     tag: sha256-97b20eafbc1e8a63fa244920980aeb81e686232a989a68f5379db73032d0b1a8 
                 auth:
