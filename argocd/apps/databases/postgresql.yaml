@@ -1,3 +1,9 @@
+# Required secrets:
+# postgres-secret:
+#   postgres-password    -> DB admin password
+#   password             -> DB user password (used by applicaiton)
+#   replication-password -> Password for replication user to replicate data from DB
+
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

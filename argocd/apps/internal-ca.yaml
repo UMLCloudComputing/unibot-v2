@@ -16,7 +16,6 @@ spec:
     name: selfsigned-issuer
     kind: ClusterIssuer
     group: cert-manager.io
-
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
