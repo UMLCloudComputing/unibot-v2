@@ -20,6 +20,13 @@ spec:
                         memory: "2Gi"
                   image: 
                     tag: latest 
+                  auth:
+                    enabled: true
+                    exisitingSecret: "redis-creds"
+                    existingSecretPasswordKey: "redis-password"
+                    usePasswordFiles: false
+                    usePasswordFileFromSecret: false
+                    
     destination:
         server: 'https://kubernetes.default.svc'
         namespace: redis 
