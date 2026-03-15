@@ -15,6 +15,8 @@ spec:
         - 'https://charts.bitnami.com/bitnami'
         - 'bitnamilegacy/postgresql'
         - 'registry-1.docker.io/bitnamicharts'
+        - 'docker.io/envoyproxy'
+        - 'https://open-webui.github.io/helm-charts'
     destinations:
         - namespace: 'milvus-cluster'
           server: 'https://kubernetes.default.svc'
@@ -29,6 +31,14 @@ spec:
         - namespace: 'postgresql'
           server: 'https://kubernetes.default.svc'
         - namespace: 'redis'
+          server: 'https://kubernetes.default.svc'
+        - namespace: 'envoy-gateway-operator'
+          server: 'https://kubernetes.default.svc'
+        - namespace: 'openwebui'
+          server: 'https://kubernetes.default.svc'
+        - namespace: 'trust-manager'
+          server: 'https://kubernetes.default.svc'
+        - namespace: 'cloudflare'
           server: 'https://kubernetes.default.svc'
     clusterResourceWhitelist:
         - group: '*'
