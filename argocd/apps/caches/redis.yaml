@@ -1,3 +1,6 @@
+# Requires Secrets:
+# redis-creds   -> Configure yourself, key should be redis-password. Provides authentiation credntials for redis sessions.
+
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
