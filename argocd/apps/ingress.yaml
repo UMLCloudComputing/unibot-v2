@@ -10,7 +10,7 @@ spec:
     targetRevision: HEAD
     path: argocd/apps/ingress
   destination:
-    server: https://kubernetes.defaut.svc
+    server: https://kubernetes.default.svc
     namespace: argocd
   syncPolicy:
     syncOptions:

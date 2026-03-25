@@ -2,7 +2,7 @@
 # webui-secret-key    -> Configure yourself, IE openssl rand -hex 32
 # postgresql-db-url   -> Configured with login credentials from postgresql namespace secret
 # redis-url           -> Configure with global password from redis namespace secret
-# pipelines-api-key   -> Configure yourself, IE openssl rand -hex 32
+# pipelines-api-key   -> (OPTIONAL) If using Open WebUI pipelines (as microservice). Configure yourself, IE openssl rand -hex 32
 
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -26,14 +26,23 @@ spec:
         tika:
           enabled: false
         pipelines:
-          enabled: true 
+          enabled: false
           extraEnvVars:
             - name: PIPELINES_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: pipelines-api-key
                   key: key
+            - name: GLOBAL_LOG_LEVEL
+              value: DEBUG
         extraEnvVars:
+          - name: OPENAI_API_BASE_URL
+            value: "http://openwebui-pipelines.openwebui.svc.cluster.local:9099"
+          - name: OPENAI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: pipelines-api-key
+                key: key
           - name: WEBUI_SECRET_KEY
             valueFrom:
               secretKeyRef:
