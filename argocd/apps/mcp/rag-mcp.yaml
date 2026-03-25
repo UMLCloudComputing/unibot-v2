@@ -1,0 +1,71 @@
+# Required secrets
+# rag-mcp-secret
+#  milvus_uri: VALUE 
+#  collection_name: VALUE
+#  address: VALUE
+#  ollama_host: VALUE
+#  address: VALUE
+#  top_k: VALUE 
+
+apiVerison: apps/v1
+kind: Deployment
+metadata:
+  name: rag-mcp-deployment
+  namespace: mcp
+spec:
+  replicas: 3
+  selector: 
+    matchLabels:
+      pod: rag-mcp
+  template:
+    metadata:
+      labels:
+        pod: rag-mcp
+    spec:
+      containers:
+        - image: ghcr.io/UMLCloudComputing/unibot-v2-rag-mcp
+          name: rag-mcp
+          env:
+            - name: MILVUS_URI
+              valueFrom:
+                secretKeyRef:
+                  name: rag-mcp-secret
+                  key: milvus-uri
+            - name: COLLECTION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: rag-mcp-secret
+                  key: collection_name
+            - name: ADDRESS 
+              valueFrom:
+                secretKeyRef:
+                  name: rag-mcp-secret
+                  key: address
+            - name: OLLAMA_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: rag-mcp-secret
+                  key: ollama_host
+            - name: TOP_K
+              valueFrom:
+                secretKeyRef:
+                  name: rag-mcp-secret
+                  key: top_k
+---
+apiVersion: apps/v1
+kind: Service
+metadata:
+  name: rag-mcp-svc
+spec:
+  selector:
+    app.kubernetes.io/name: rag-mcp
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8000
+      targetPort: 8000
+    type: ClusterIP
