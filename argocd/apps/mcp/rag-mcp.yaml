@@ -23,7 +23,7 @@ spec:
         pod: rag-mcp
     spec:
       containers:
-        - image: ghcr.io/UMLCloudComputing/unibot-v2-rag-mcp
+        - image: ghcr.io/umlcloudcomputing/unibot-v2-rag-mcp:sha-a145c073b02faba71574b9ce272c5f901b3e0ca5 
           name: rag-mcp
           env:
             - name: MILVUS_URI
