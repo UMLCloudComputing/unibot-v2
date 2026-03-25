@@ -20,13 +20,17 @@ Internally, this technology performs an operation called vectorization on the da
 ### Database details 
 [Docling](https://github.com/docling-project/docling) is the document parser and vectorizer. 
 
-[Milvus](https://github.com/milvus-io/milvus) is the vector database engine that powers the query lookups and responses. 
+[Milvus](https://github.com/milvus-io/milvus) is the vector database engine that powers the query lookups and responses for UMass Lowell related information.
+
+[Postsgresql](...) is the database engine storing session and user data for Open WebUI.
 
 ## UI ✨
 [Open WebUI](https://github.com/open-webui/open-webui) is the UI provider that operates through the OpenAI API or Ollama API standards.
 
-## Critical Piece: Llama Stack 🧩
-In order to provide a unified API interface for Open WebUI, we leverage [Llama Stack](https://github.com/llamastack/llama-stack). Llama Stacks handles the process of querying the RAGDatabase and feeding the information to the model alongside the prompt. It enables using the components of the project as independent blocks and abstracts away the complexity of RAG with the model to a simple API interface.
+## Cache 🗃️
+[Redis] is the cache service being use to maintain application cache for Open WebUI.
 
 ## Diagram 🖌️
 ![Simplified Design](https://github.com/UMLCloudComputing/unibot-v2/raw/main/images/unibot-simplified-design.png)
+
+
