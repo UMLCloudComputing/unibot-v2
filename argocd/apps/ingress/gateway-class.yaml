@@ -9,4 +9,4 @@ spec:
     group: gateway.envoyproxy.io
     kind: EnvoyProxy
     name: internal-proxy-config
-    namespace: envoy-gateway-system
+    namespace: envoy-gateway-operator

@@ -5,6 +5,11 @@ metadata:
   namespace: openwebui
 spec:
   gatewayClassName: envoy-gateway-class 
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: internal-proxy-config
   listeners:
   - name: http
     port: 80
