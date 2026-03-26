@@ -5,3 +5,8 @@ metadata:
 spec:
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
   description: "Envoy Gateway Class"
+  parametersRef:
+    group: gateway.envoyproxy.io
+    kind: EnvoyProxy
+    name: internal-proxy-config
+    namespace: envoy-gateway-system
