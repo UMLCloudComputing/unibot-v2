@@ -55,8 +55,13 @@ async def app_lifespan(app: FastMCP) -> AsyncIterator[dict]:
 mcp_server = FastMCP("RAG-agentic-service", lifespan=app_lifespan)
 
 
-@mcp_server.tool()
-async def search_knowledge_base(query: str):
+@mcp_server.tool(
+  name = "search_knowledge_base",
+  description = "Search the internal vector database for information about the University of Massachusetts Lowell",
+  tags = {"rag"},
+  meta = {"version": "0.1", "author": "Gurpreet Singh"}
+)
+async def search_knowledge_base(query: str) -> list[dict]:
     """Searches internal vector database using provided user query"""
     global milvus_client, ollama_client 
      
@@ -77,7 +82,7 @@ async def search_knowledge_base(query: str):
         output_fields=["text", "source_url"],
       )
    
-    return {"results": results}
+    return [{"text": result.get("entity")["text"], "source_url": result.get("entity")["source_url"]} for result in results[0]]
 
 
 @mcp_server.custom_route("/health", methods=["GET"])
