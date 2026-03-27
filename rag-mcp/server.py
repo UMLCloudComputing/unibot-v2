@@ -1,6 +1,7 @@
 # server.py
 import os
 import time
+import logging
 from typing import AsyncIterator
 from ollama import Client as OllamaClient
 from contextlib import asynccontextmanager
@@ -15,6 +16,9 @@ COLLECTION_NAME = os.getenv("COLLECTION_NAME", "docs")
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://192.168.0.193:11434")
 TOP_K = os.getenv("TOP_K", 5)
 ADDRESS = os.getenv("ADDRESS", "127.0.0.1")
+
+# Logging
+
 
 # Globals
 milvus_client = None
@@ -68,7 +72,8 @@ async def search_knowledge_base(query: str):
       results = milvus_client.search(
         collection_name = COLLECTION_NAME,
         data=[vector],
-        limit=TOP_K,
+        search_params={"metric__type": "L2"},
+        limit=int(TOP_K),
         output_fields=["text", "source_url"],
       )
    
