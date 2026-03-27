@@ -40,7 +40,7 @@ async def app_lifespan(app: FastMCP) -> AsyncIterator[dict]:
     milvus_client.load_collection(COLLECTION_NAME)
     print(f"Connected to Milvus at {MILVUS_URI}") 
     ollama_client = OllamaClient(host=OLLAMA_HOST)
-    print("Connected to Ollama embedding model")
+    print(f"Connected to Ollama embedding model at {OLLAMA_HOST}")
     yield
   finally:
     if milvus_client:
