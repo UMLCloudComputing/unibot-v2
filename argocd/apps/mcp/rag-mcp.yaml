@@ -4,7 +4,6 @@
 #  collection_name: VALUE
 #  address: VALUE
 #  ollama_host: VALUE
-#  address: VALUE
 #  top_k: VALUE 
 
 apiVersion: apps/v1
@@ -25,12 +24,19 @@ spec:
       containers:
         - image: ghcr.io/umlcloudcomputing/unibot-v2-rag-mcp:sha-a145c073b02faba71574b9ce272c5f901b3e0ca5 
           name: rag-mcp
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
           env:
             - name: MILVUS_URI
               valueFrom:
                 secretKeyRef:
                   name: rag-mcp-secret
-                  key: milvus-uri
+                  key: milvus_uri
             - name: COLLECTION_NAME
               valueFrom:
                 secretKeyRef:
@@ -52,14 +58,16 @@ spec:
                   name: rag-mcp-secret
                   key: top_k
 ---
-apiVersion: apps/v1
+apiVersion: v1
 kind: Service
 metadata:
   name: rag-mcp-svc
+  namespace: mcp
 spec:
   selector:
-    app.kubernetes.io/name: rag-mcp
+    pod: rag-mcp
   internalTrafficPolicy: Cluster
+  sessionAffinity: ClientIP
   ipFamilies:
     - IPv4
   ipFamilyPolicy: SingleStack
@@ -68,4 +76,16 @@ spec:
       protocol: TCP
       port: 8000
       targetPort: 8000
-    type: ClusterIP
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rag-mcp-secret
+  namespace: mcp
+data:
+  milvus_uri: aHR0cDovL21pbHZ1cy1jbHVzdGVyLW1pbHZ1cy5taWx2dXMtY2x1c3Rlci5zdmMuY2x1c3Rlci5sb2NhbDoxOTUzMA==
+  collection_name: ZG9jcw== 
+  address: MC4wLjAuMA==
+  ollama_host: aHR0cDovLzE5Mi4xNjguMC4xOTM6MTE0MzQ=
+  top_k: NQ==
