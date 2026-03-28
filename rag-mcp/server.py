@@ -61,8 +61,8 @@ mcp_server = FastMCP("RAG-agentic-service", lifespan=app_lifespan)
   tags = {"rag"},
   meta = {"version": "0.1", "author": "Gurpreet Singh"}
 )
-async def search_knowledge_base(query: str) -> list[dict]:
-    """Searches internal vector database using provided user query"""
+async def search_umass_lowell_knowledge_base(query: str) -> list[dict]:
+    """Searches University of Massachusetts vector database for relevant context chunks"""
     global milvus_client, ollama_client 
      
     async with timeit("Ollama Embedding"):
