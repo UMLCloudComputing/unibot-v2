@@ -22,7 +22,7 @@ spec:
         pod: rag-mcp
     spec:
       containers:
-        - image: ghcr.io/umlcloudcomputing/unibot-v2-rag-mcp:sha-f1e15e20f40bcaa7ccd87fe734e8b1b75a419117
+        - image: ghcr.io/umlcloudcomputing/unibot-v2-rag-mcp:sha-54600d5fddcccbbfbc07d0eb5dceee3bec281693
           name: rag-mcp
           ports:
             - containerPort: 8000
