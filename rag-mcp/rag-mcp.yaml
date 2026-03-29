@@ -1,0 +1,91 @@
+# Required secrets
+# rag-mcp-secret
+#  milvus_uri: VALUE 
+#  collection_name: VALUE
+#  address: VALUE
+#  ollama_host: VALUE
+#  top_k: VALUE 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-mcp-deployment
+  namespace: mcp
+spec:
+  replicas: 3
+  selector: 
+    matchLabels:
+      pod: rag-mcp
+  template:
+    metadata:
+      labels:
+        pod: rag-mcp
+    spec:
+      containers:
+        - image: ghcr.io/umlcloudcomputing/unibot-v2-rag-mcp:sha-54600d5fddcccbbfbc07d0eb5dceee3bec281693
+          name: rag-mcp
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+          env:
+            - name: MILVUS_URI
+              valueFrom:
+                secretKeyRef:
+                  name: rag-mcp-secret
+                  key: milvus_uri
+            - name: COLLECTION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: rag-mcp-secret
+                  key: collection_name
+            - name: ADDRESS 
+              valueFrom:
+                secretKeyRef:
+                  name: rag-mcp-secret
+                  key: address
+            - name: OLLAMA_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: rag-mcp-secret
+                  key: ollama_host
+            - name: TOP_K
+              valueFrom:
+                secretKeyRef:
+                  name: rag-mcp-secret
+                  key: top_k
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-mcp-svc
+  namespace: mcp
+spec:
+  selector:
+    pod: rag-mcp
+  internalTrafficPolicy: Cluster
+  sessionAffinity: ClientIP
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rag-mcp-secret
+  namespace: mcp
+data:
+  milvus_uri: aHR0cDovL21pbHZ1cy1jbHVzdGVyLW1pbHZ1cy5taWx2dXMtY2x1c3Rlci5zdmMuY2x1c3Rlci5sb2NhbDoxOTUzMA==
+  collection_name: ZG9jcw== 
+  address: MC4wLjAuMA==
+  ollama_host: aHR0cDovLzE5Mi4xNjguMC4xOTM6MTE0MzQ=
+  top_k: Mw==
