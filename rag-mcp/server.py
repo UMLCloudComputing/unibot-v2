@@ -1,10 +1,8 @@
 # server.py
 import os
 import time
-import logging
 from typing import AsyncIterator
 from ollama import Client as OllamaClient
-from contextlib import asynccontextmanager
 from fastmcp import FastMCP, Context
 from fastmcp.server.lifespan import lifespan
 from pymilvus import MilvusClient
@@ -19,32 +17,22 @@ ADDRESS = os.getenv("ADDRESS", "127.0.0.1")
 
 # Logging
 
-
 # Globals
 milvus_client = None
 ollama_client = None
 
-@asynccontextmanager
-async def timeit(label: str):
-  now = time.monotonic()
-  try:
-    yield
-  finally:
-    print(f"DEBUG: {label} took {time.monotonic() - now:4f}s")
-
-
 # Persistent connection lifecycle
 @lifespan
-async def app_lifespan(app: FastMCP) -> AsyncIterator[dict]:
+async def app_lifespan(app: FastMCP, ctx: Context) -> AsyncIterator[dict]:
   global milvus_client, ollama_client
-
+  await ctx.info("Starting RAG-MCP Server") 
   try:
     # Startup the connections
     milvus_client = MilvusClient(uri=MILVUS_URI)
     milvus_client.load_collection(COLLECTION_NAME)
-    print(f"Connected to Milvus at {MILVUS_URI}") 
+    ctx.info(f"Connected to Milvus at {MILVUS_URI}") 
     ollama_client = OllamaClient(host=OLLAMA_HOST)
-    print(f"Connected to Ollama embedding model at {OLLAMA_HOST}")
+    ctx.info(f"Connected to Ollama embedding model at {OLLAMA_HOST}")
     yield
   finally:
     if milvus_client:
@@ -56,7 +44,7 @@ mcp_server = FastMCP("RAG-agentic-service", lifespan=app_lifespan)
 
 
 @mcp_server.tool(
-  name = "search_knowledge_base",
+  name = "search_umass_lowell_knowledge_base",
   description = "Search the internal vector database for information about the University of Massachusetts Lowell",
   tags = {"rag"},
   meta = {"version": "0.1", "author": "Gurpreet Singh"}
@@ -81,8 +69,8 @@ async def search_umass_lowell_knowledge_base(query: str) -> list[dict]:
         limit=int(TOP_K),
         output_fields=["text", "source_url"],
       )
-   
-    return [{"text": result.get("entity")["text"], "source_url": result.get("entity")["source_url"]} for result in results[0]]
+
+    response = [{"text": result.get("entity")["text"], "source_url": result.get("entity")["source_url"]} for result in results[0]]
 
 
 @mcp_server.custom_route("/health", methods=["GET"])
