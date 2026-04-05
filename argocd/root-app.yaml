@@ -11,6 +11,7 @@ spec:
     sourceRepos:
         - 'https://charts.jetstack.io'
         - 'https://github.com/UMLCloudComputing/unibot-v2.git'
+        - 'https://github.com/UMLCloudComputing/uml-now-mcp.git'
         - 'https://zilliztech.github.io/milvus-operator/'
         - 'https://charts.bitnami.com/bitnami'
         - 'registry-1.docker.io/bitnamicharts'
