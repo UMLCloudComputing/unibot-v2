@@ -15,6 +15,8 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: mcp
   syncPolicy:
+    syncOptions:
+      - CreateNamespace = true
     automated:
       prune: true
       selfHeal: true

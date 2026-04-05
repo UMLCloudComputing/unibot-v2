@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: mcp
-  labels:
-    pod-security.kubernetes.io/enforce: baseline # Change if needed
-
