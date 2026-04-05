@@ -8,7 +8,7 @@ metadata:
 spec:
   project: unibot-v2
   source:
-    repoURL: 'http://github.com/UMLCloudComputing/uml-now-mcp.git'
+    repoURL: 'https://github.com/UMLCloudComputing/uml-now-mcp.git'
     targetRevision: HEAD
     path: k8s/
   destination:
