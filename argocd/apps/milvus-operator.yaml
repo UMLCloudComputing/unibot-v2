@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: 'https://zilliztech.github.io/milvus-operator/'
     chart: milvus-operator
-    targetRevision: 1.3.x # Use the latest stable version
+    targetRevision: 1.3.6 # Use the latest stable version
     helm:
         values: |
             admissionWebhooks:
