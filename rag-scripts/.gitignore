@@ -1,4 +1,4 @@
 volumes/
 logs/
 data/
-
+.venv/
