@@ -23,12 +23,12 @@ DIMENSION = 768
 MILVUS_HOST=os.getenv("MILVUS_HOST")
 MILVUS_PORT=os.getenv("MILVUS_PORT")
 COLLECTION_NAME=os.getenv("COLLECTION_NAME")
-LOG_OUTPUT_PATH = os.getenv("LOG_OUTPUT_PATH", "logs")
+LOG_OUTPUT_PATH = os.getenv("LOG_OUTPUT_PATH", "logs/")
 
 url_queue = Queue()
 chunk_queue = Queue()
 processed_queue = Queue()
-poll_executor = ThreadPoolExecutor(max_workers=50)
+poll_executor = ThreadPoolExecutor(max_workers=100)
 
 # --- Logging Setup ---
 logging.basicConfig(
@@ -259,9 +259,9 @@ if __name__ == "__main__":
     milvus_pbar = tqdm(total=None, desc="[4/4] Inserting into Milvus", unit="chunk", position=3)
 
     # Adjust as needed
-    num_submitters=8
-    num_embedders=4
-    num_inserters=4
+    num_submitters=40
+    num_embedders=30
+    num_inserters=30
 
     for i in range(num_inserters):
         threading.Thread(target=milvus_worker, args=(milvus_pbar,), name="Inserter-{i}", daemon=True).start()
