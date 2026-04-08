@@ -19,6 +19,12 @@ OP_FILES_PATH = os.getenv('OP_FILES_PATH')
 
 current_urls = Queue()
 
+# Create log and data output dir if they don't exist
+if not os.path.exists(LOG_OUTPUT_PATH):
+  os.makedirs(LOG_OUTPUT_PATH)
+if not os.path.exists(OP_FILES_PATH)
+  os.makedirs(OP_FILES_PATH)
+
 # --- Logging Setup ---
 logging.basicConfig(
   level=logging.INFO,
