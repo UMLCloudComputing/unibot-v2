@@ -134,7 +134,7 @@ def main():
   print(f" - To Add/Update: {len(to_add)}")
   print(f" - To Delete: {len(to_delete)}")
   print(f"Check {OP_FILES_PATH}to_add.txt and {OP_FILES_PATH}to_delete.txt for details")
-  print(f"Completed in {end - start} seconds") 
+  print(f"Completed in {end_time - start_time} seconds") 
   
 if __name__ == "__main__":
   main()
