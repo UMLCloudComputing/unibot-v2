@@ -149,30 +149,6 @@ def embedding_worker(embedding_pbar):
         batch = []
         sentinel_found = False
         # Attempt to fill a batch
-        try:
-            # Get at least one item (blocking)
-            first_item = chunk_queue.get(timeout=5)
-            if first_item is None:
-                chunk_queue.task_done()
-                return 
-
-            batch.append(first_item)
-
-            # Try to get more items until BATCH_SIZE is reached (non-blocking)
-            while len(batch) < BATCH_SIZE:
-                try:
-                    next_item = chunk_queue.get_nowait()
-                    if next_item is None:
-                        # Put it back so other threads/loops see the sentinel
-                        chunk_queue.put(None)
-                        sentinel_found = True
-                        break
-                    batch.append(next_item)
-                except Empty:
-                    break
-        except Empty:
-            # If nothing arrived in 5 seconds, check if we are totally done
-            continue
         if batch:
             try:
                 texts = [item["text"] for item in batch]

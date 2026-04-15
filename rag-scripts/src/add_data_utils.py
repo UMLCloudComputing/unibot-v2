@@ -1,17 +1,16 @@
 import asyncio
 import aiohttp
 import logging
-from tqdm import tqdm
+from tqdm.asyncio import tqdm
 from aiohttp import ClientSession
-from queue import Queue
-
-MAX_CONCURRENT_TASKS = 80
-semaphore = asyncio.Semaphore(MAX_CONCURRENT_TASKS)
+from asyncio import Queue, Semaphore
+from ollama import AsyncClient
 
 logger = logging.getLogger(__name__)
 
 # ----------URL Chunkers----------
-async def chunk_url_generator(session: ClientSession, url: str, task_registry: dict, docling_base_url: str, chunk_pbar: tqdm = None):
+async def chunk_url_generator(session: ClientSession, url: str, task_registry: dict, 
+                              docling_base_url: str, semaphore: Semaphore, chunk_pbar: tqdm = None):
   """
   Asynchronously requests and yields chunks from docling by url.
   Follows generator pattern.
@@ -64,7 +63,8 @@ async def chunk_url_generator(session: ClientSession, url: str, task_registry: d
       if task_id in task_registry:
         del task_registry[task_id]
 
-async def chunk_url(session: ClientSession, url: str, task_registry: dict, docling_base_url: str, chunk_queue: Queue, chunk_pbar: tqdm = None):
+async def chunk_url(session: ClientSession, url: str, task_registry: dict, 
+                    docling_base_url: str, chunk_queue: Queue, semaphore: Semaphore, chunk_pbar: tqdm = None) :
   """
   Asynchronously requests and adds chunks from docling by url.
   Can either operate as a generator or internally insert to a queue. 
@@ -105,7 +105,7 @@ async def chunk_url(session: ClientSession, url: str, task_registry: dict, docli
                   source_url = task_registry.get(task_id)
                   chunks = final_data.get("chunks")
                   for chunk in chunks:
-                    chunk_queue.put({ 
+                    await chunk_queue.put({ 
                       "text": chunk.get("text"),
                       "source_url": source_url
                     })
@@ -121,5 +121,52 @@ async def chunk_url(session: ClientSession, url: str, task_registry: dict, docli
 
 
 # -----------Embedders-------------
-async def embedder(chunk_queue: Queue, processed_queue: Queue, embedding_pbar: tqdm):
-  
+async def embedder(client: AsyncClient, chunk_queue: Queue, processed_queue: Queue, embedding_pbar: tqdm, batch_size: int = 32):
+    """
+        Asynchronously reads from chunk_queue, batches items for Ollama,
+        and pushes to processed_queue.
+    """
+    while True:
+        batch = []
+        sentinel_found = True
+        # Attempt to fill batch
+        try:
+            # Get at least one item
+            first_item = await chunk_queue.get()
+            if first_item is None:
+                chunk_queue.task_done()
+                return # Exit worker
+            batch.append(first_item)
+            while len(batch) < batch_size:
+                try:
+                    next_item = chunk_queue.get_nowait()
+                    if next_item is None:
+                        await chunk_queue.put(None)
+                        sentinel_found = True
+                        break
+                    batch.append(next_item)
+                except Empty:
+                    break
+        except Exception as e:
+            logger.error(f"Queue Error: {e}")
+        if batch:
+            try:
+                texts = [item["text"] for item in batch]
+                response = await client.embed(model="nomic-embed-text", input=texts)
+                vectors = response["embeddings"]
+                if len(vectors) == len(batch):
+                    for i, vector in enumerate(vectors):
+                        await processed_queue.put({
+                            "text": batch[i]["text"],
+                            "source_url": batch[i]["source_url"],
+                            "vector": vector
+                        })
+                embedding_pbar.update(len(batch)) 
+            except Exception as e:
+                logger.error(f"Batch embedding error: {e}")
+                continue
+            finally:
+                for _ in range(len(batch)):
+                    chunk_queue.task_done()
+        if sentinel_found:
+            return 
