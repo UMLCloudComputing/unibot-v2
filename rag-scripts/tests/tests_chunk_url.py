@@ -12,7 +12,7 @@ MAX_CONCURRENT_TASKS = 80
 # Tests
 @pytest.mark.asyncio
 async def test_mock_docling_contract():
-  """Verifies the mock server follows the expected Docling API protocol."""
+  """ Verifies the mock server follows the expected Docling API protocol. """
   async with mock_docling() as base_url:
     async with aiohttp.ClientSession() as session:
         
@@ -48,19 +48,17 @@ async def test_chunk_url_behavior_success():
   async with mock_docling() as base_url:
     # Setup global-like objects
     test_url = "https://example.com/doc.pdf"
-    task_registry = {}
     chunk_queue = Queue() # Asyncio Queue, not thread safe
     mock_pbar = MagicMock()
 
     async with aiohttp.ClientSession() as session:
-      await chunk_url(session, test_url, task_registry, base_url, chunk_queue, semaphore, mock_pbar)
+      await chunk_url(session, test_url, base_url, chunk_queue, semaphore, mock_pbar)
 
   # Assertions
   assert chunk_queue.qsize() == 2, "Should have two chunks in queue"
   first_chunk = chunk_queue._queue[0]
   assert first_chunk["text"] == "Chunk 1 content"
   assert first_chunk["source_url"] == test_url, "Metadata annotation failed"
-  assert len(task_registry) == 0, "Registry was not cleaned up"
   assert mock_pbar.update.called, "Progress bar updates are not being called"
   assert mock_pbar.update.call_count == 1,  "Progress bar not updated to the correct count"
 
@@ -69,13 +67,12 @@ async def test_chunk_url_generator_behavior_success():
   semaphore = asyncio.Semaphore(MAX_CONCURRENT_TASKS)
   async with mock_docling() as base_url:
     # Setup global like objects
-    test_url = "https://exmaple.com/doc.pdf"
+    test_url = "https://example.com/doc.pdf"
     chunk_queue = Queue() # Asyncio Queue, not thread safe
-    task_registry = {}
     mock_pbar = MagicMock()
 
     async with aiohttp.ClientSession() as session:
-      async for chunk in chunk_url_generator(session, test_url, task_registry, base_url, semaphore, mock_pbar):
+      async for chunk in chunk_url_generator(session, test_url, base_url, semaphore, mock_pbar):
         await chunk_queue.put(chunk)
 
   # Assertions
@@ -83,7 +80,6 @@ async def test_chunk_url_generator_behavior_success():
   first_chunk = chunk_queue._queue[0]
   assert first_chunk["text"] == "Chunk 1 content"
   assert first_chunk["source_url"] == test_url, "Metadata annotation failed"
-  assert len(task_registry) == 0, "Registry was not cleaned up"
   assert mock_pbar.update.called, "Progress bar updates are not being called"
   assert mock_pbar.update.call_count == 1,  "Progress bar not updated to the correct count"
 
@@ -94,14 +90,13 @@ async def test_chunk_url_high_volume_throughput():
     # Setup Params
     NUM_URLS = 20000
     TIME_THRESHOLD_SECONDS = 60.0
-    task_registry = {}
     chunk_queue = Queue() # Asyncio Queue, not thread safe
     mock_pbar = MagicMock()
   
     start_time = time.perf_counter()
    
     async with aiohttp.ClientSession() as session:
-      tasks = [chunk_url(session, f"http://url-{i}.com", task_registry, base_url, chunk_queue, semaphore, mock_pbar) for i in range(NUM_URLS)]
+      tasks = [chunk_url(session, f"http://url-{i}.com", base_url, chunk_queue, semaphore, mock_pbar) for i in range(NUM_URLS)]
 
       await asyncio.gather(*tasks)
 
@@ -110,7 +105,6 @@ async def test_chunk_url_high_volume_throughput():
   throughput = NUM_URLS / total_duration
   assert total_duration < TIME_THRESHOLD_SECONDS, f"Throughput too low! {throughput:.2f} URL/s"
   assert chunk_queue.qsize() == (NUM_URLS * 2), "Chunk count mismatch"
-  assert len(task_registry) == 0, "Registry was not cleaned up"
   assert mock_pbar.update.called, "Progress bar updates are not being called"
   assert mock_pbar.update.call_count == NUM_URLS,  "Progress bar not updated to the correct count"
 
@@ -121,7 +115,6 @@ async def test_chunk_url_generator_high_volume_throughput():
     # Setup Params
     NUM_URLS = 20000
     TIME_THRESHOLD_SECONDS = 60.0
-    task_registry = {}
     chunk_queue = Queue() # Asyncio Queue, not thread safe
     mock_pbar = MagicMock()
   
@@ -129,7 +122,7 @@ async def test_chunk_url_generator_high_volume_throughput():
    
     async with aiohttp.ClientSession() as session:
       async def consume_generator(url):
-        async for chunk in chunk_url_generator(session, url, task_registry, base_url, semaphore, mock_pbar):
+        async for chunk in chunk_url_generator(session, url, base_url, semaphore, mock_pbar):
           await chunk_queue.put(chunk)
       tasks = [consume_generator(f"http://url-{i}.com") for i in range(NUM_URLS)]
       await asyncio.gather(*tasks)
@@ -139,7 +132,6 @@ async def test_chunk_url_generator_high_volume_throughput():
   throughput = NUM_URLS / total_duration
   assert total_duration < TIME_THRESHOLD_SECONDS, f"Throughput too low! {throughput:.2f} URL/s"
   assert chunk_queue.qsize() == (NUM_URLS * 2), "Chunk count mismatch"
-  assert len(task_registry) == 0, "Registry was not cleaned up"
   assert mock_pbar.update.called, "Progress bar updates are not being called"
   assert mock_pbar.update.call_count == NUM_URLS,  "Progress bar not updated to the correct count"
 
