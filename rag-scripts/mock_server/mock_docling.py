@@ -53,4 +53,3 @@ async def mock_docling():
     yield f"127.0.0.1:{port}"
   finally:
     await runner.cleanup()
-
