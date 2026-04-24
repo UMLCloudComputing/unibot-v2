@@ -3,13 +3,16 @@ import aiohttp
 import logging
 from tqdm.asyncio import tqdm
 from aiohttp import ClientSession
-from asyncio import Queue, Semaphore
+from asyncio import Queue as asyncQueue
+from asyncio import Semaphore, QueueEmpty
+from queue import Queue as tsQueue
 from ollama import AsyncClient
+from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection, utility, MilvusClient
 
 logger = logging.getLogger(__name__)
 
 # ----------URL Chunkers----------
-async def chunk_url_generator(session: ClientSession, url: str, task_registry: dict, 
+async def chunk_url_generator(session: ClientSession, url: str, 
                               docling_base_url: str, semaphore: Semaphore, chunk_pbar: tqdm = None):
   """
   Asynchronously requests and yields chunks from docling by url.
@@ -32,7 +35,6 @@ async def chunk_url_generator(session: ClientSession, url: str, task_registry: d
       data = await resp.json()
       task_id = data["task_id"]
 
-      task_registry[task_id] = url
   
     ws_url = f"ws://{docling_base_url}/v1/status/ws/{task_id}"
   
@@ -46,12 +48,11 @@ async def chunk_url_generator(session: ClientSession, url: str, task_registry: d
                 results_url = f"http://{docling_base_url}/v1/result/{task_id}"
                 async with session.get(results_url) as results_resp:
                   final_data = await results_resp.json()
-                  source_url = task_registry.get(task_id)
                   chunks = final_data.get("chunks")
                   for chunk in chunks:
                     yield { 
                       "text": chunk.get("text"),
-                      "source_url": source_url
+                      "source_url": url
                     }
                   if chunk_pbar:
                     chunk_pbar.update(1)
@@ -59,17 +60,11 @@ async def chunk_url_generator(session: ClientSession, url: str, task_registry: d
             break 
     except Exception as e:
       logger.error(f"Websocket error for task {task_id} | {e}")
-    finally:
-      if task_id in task_registry:
-        del task_registry[task_id]
 
-async def chunk_url(session: ClientSession, url: str, task_registry: dict, 
-                    docling_base_url: str, chunk_queue: Queue, semaphore: Semaphore, chunk_pbar: tqdm = None) :
+async def chunk_url(session: ClientSession, url: str, 
+                    docling_base_url: str, chunk_queue: asyncQueue, semaphore: Semaphore, chunk_pbar: tqdm = None) :
   """
   Asynchronously requests and adds chunks from docling by url.
-  Can either operate as a generator or internally insert to a queue. 
-  Toggle generator mode by setting `generator` argument to True.
-  Toggle internal queue writes by `chunk_queue` argument to a Queue object.
   """
   async with semaphore:
     payload = {
@@ -88,7 +83,6 @@ async def chunk_url(session: ClientSession, url: str, task_registry: dict,
       data = await resp.json()
       task_id = data["task_id"]
 
-      task_registry[task_id] = url
   
     ws_url = f"ws://{docling_base_url}/v1/status/ws/{task_id}"
   
@@ -102,12 +96,11 @@ async def chunk_url(session: ClientSession, url: str, task_registry: dict,
                 results_url = f"http://{docling_base_url}/v1/result/{task_id}"
                 async with session.get(results_url) as results_resp:
                   final_data = await results_resp.json()
-                  source_url = task_registry.get(task_id)
                   chunks = final_data.get("chunks")
                   for chunk in chunks:
                     await chunk_queue.put({ 
                       "text": chunk.get("text"),
-                      "source_url": source_url
+                      "source_url": url
                     })
                   if chunk_pbar:
                     chunk_pbar.update(1)
@@ -115,58 +108,90 @@ async def chunk_url(session: ClientSession, url: str, task_registry: dict,
             break 
     except Exception as e:
       logger.error(f"Websocket error for task {task_id} | {e}")
-    finally:
-      if task_id in task_registry:
-        del task_registry[task_id]
-
 
 # -----------Embedders-------------
-async def embedder(client: AsyncClient, chunk_queue: Queue, processed_queue: Queue, embedding_pbar: tqdm, batch_size: int = 32):
+async def embedder(client: AsyncClient, chunk_queue: asyncQueue, 
+                   processed_queue: tsQueue, stop_event: asyncio.Event,
+                   embedding_pbar: tqdm = None, batch_size: int = 32):
     """
         Asynchronously reads from chunk_queue, batches items for Ollama,
-        and pushes to processed_queue.
+        and pushes to processed_queue. 
+        Stops when either the stop event is triggered or when the chunk_queue is empty.
+        Requires an external asyncio Event object to orchestrate termination.
+        Batch first approach, processed_queue contains batches, not individual chunk embeddings. 
     """
-    while True:
+    loop = asyncio.get_running_loop()
+    while not(stop_event.is_set() and chunk_queue.empty()):
         batch = []
-        sentinel_found = True
         # Attempt to fill batch
         try:
             # Get at least one item
-            first_item = await chunk_queue.get()
-            if first_item is None:
-                chunk_queue.task_done()
-                return # Exit worker
-            batch.append(first_item)
+            try:
+                item = await asyncio.wait_for(chunk_queue.get(), timeout=1.0)
+                batch.append(item)
+            except (asyncio.TimeoutError, QueueEmpty):
+                continue
+            
+            # Build batch
             while len(batch) < batch_size:
                 try:
                     next_item = chunk_queue.get_nowait()
-                    if next_item is None:
-                        await chunk_queue.put(None)
-                        sentinel_found = True
-                        break
                     batch.append(next_item)
-                except Empty:
+                except QueueEmpty:
                     break
+
+            texts = [item["text"] for item in batch]
+            response = await client.embed(model="nomic-embed-text", input=texts)
+            vectors = response["embeddings"]
+            # Wrap ollama response with metadata into single batch
+            # Pre-formatted in column-order format for Milvus
+            processed_batch = [
+                {
+                    "source_url": batch[i]['source_url'],
+                    "text": texts[i],
+                    "vector": vectors[i]
+                }
+                for i in range(len(batch))
+            ]
+            # Allows for non-blocking behavior to operate with thread safe queue
+            await loop.run_in_executor(
+                None, processed_queue.put, processed_batch
+            )
+            if embedding_pbar:
+                embedding_pbar.update(len(batch))
+                
         except Exception as e:
-            logger.error(f"Queue Error: {e}")
-        if batch:
+            logger.error(f"Embedder Error: {e}")
+        finally:
+            for _ in range(len(batch)):
+                chunk_queue.task_done()
+
+# --- Milvus Worker ---
+def milvus_worker(processed_queue: tsQueue, milvus_host: str, milvus_port: str, 
+                  collection_name: str, milvus_pbar: tqdm = None):
+    """
+    Consumes from processed_queue and inserts into Milvus in batches.
+    Exits only when a None sentinel is recieved.
+    """
+    client = MilvusClient(uri=f"http://{milvus_host}:{milvus_port}")
+    try:
+        while True:
+            batch = processed_queue.get()
+            if batch is None:
+                logger.info("Milvus worker received shutdown signal")
+                break
+
             try:
-                texts = [item["text"] for item in batch]
-                response = await client.embed(model="nomic-embed-text", input=texts)
-                vectors = response["embeddings"]
-                if len(vectors) == len(batch):
-                    for i, vector in enumerate(vectors):
-                        await processed_queue.put({
-                            "text": batch[i]["text"],
-                            "source_url": batch[i]["source_url"],
-                            "vector": vector
-                        })
-                embedding_pbar.update(len(batch)) 
+                client.insert(collection_name=collection_name, data=batch)
+                
+                if milvus_pbar:
+                    milvus_pbar.update(len(batch))
+
             except Exception as e:
-                logger.error(f"Batch embedding error: {e}")
-                continue
+                logger.error(f"Milvus Insert Error: {e}")
+
             finally:
-                for _ in range(len(batch)):
-                    chunk_queue.task_done()
-        if sentinel_found:
-            return 
+                # Mark batch as done
+                processed_queue.task_done()
+    finally:
+        client.close()

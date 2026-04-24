@@ -3,8 +3,8 @@ import asyncio
 import aiohttp
 import time
 from asyncio import Queue
-from mock_server import mock_docling
-from src import chunk_url, chunk_url_generator
+from mock_server.mock_docling import mock_docling
+from src.add_data_utils import chunk_url, chunk_url_generator
 from unittest.mock import MagicMock
 
 MAX_CONCURRENT_TASKS = 80
@@ -98,7 +98,7 @@ async def test_chunk_url_high_volume_throughput():
     async with aiohttp.ClientSession() as session:
       tasks = [chunk_url(session, f"http://url-{i}.com", base_url, chunk_queue, semaphore, mock_pbar) for i in range(NUM_URLS)]
 
-      await asyncio.gather(*tasks)
+      _ = await asyncio.gather(*tasks)
 
   end_time = time.perf_counter()
   total_duration = end_time - start_time

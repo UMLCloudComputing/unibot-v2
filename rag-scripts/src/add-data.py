@@ -1,6 +1,5 @@
 import threading
 import time
-import argparse
 import os
 import logging
 import httpx
@@ -11,7 +10,7 @@ from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Colle
 from queue import Queue, Empty
 from tqdm import tqdm
 
-load_dotenv()
+_ = load_dotenv()
 
 # Configuration
 OP_FILES_PATH = os.getenv("OP_FILES_PATH")
