@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from aiohttp import web
 
 # Fake Docling Server
-async def handle_chunk_request(request):
+async def handle_async_chunk_request(request):
   """ Mimics /v1/chunk/hybrid/source/async """
   data = await request.json()
   # Check request structure
@@ -39,7 +39,7 @@ async def handle_get_results(request):
 @asynccontextmanager
 async def mock_docling():
   app = web.Application()
-  app.router.add_post("/v1/chunk/hybrid/source/async", handle_chunk_request)
+  app.router.add_post("/v1/chunk/hybrid/source/async", handle_async_chunk_request)
   app.router.add_get("/v1/status/ws/{task_id}", handle_ws_status)
   app.router.add_get("/v1/result/{task_id}", handle_get_results)
 
