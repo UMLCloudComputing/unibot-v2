@@ -71,7 +71,6 @@ def setup_milvus(is_worker=False):
         collection = Collection(COLLECTION_NAME)
         return collection
 
-
 def single_task_poller(task_id, original_url, pbar):
     logging.info(f"Poller-Start: {task_id} for {original_url}")
     with httpx.Client(timeout=30) as client:

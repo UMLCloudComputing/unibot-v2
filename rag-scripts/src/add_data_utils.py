@@ -183,8 +183,10 @@ def chunk_url_sync(
                 chunks = data["chunks"]
                 for chunk in chunks:
                     chunk_queue.put({"text": chunk.get("text"), "source_url": url})
+
                 if pbar is not None:
                     pbar.update(1)
+
             except httpx.HTTPStatusError as e:
                 logger.error(
                     f"Server error {e.response.status_code} while processing {url}"
