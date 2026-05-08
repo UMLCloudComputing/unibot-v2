@@ -50,7 +50,7 @@ jobs:
             
           - name: Handle New URLs
             run: |
-                python3 add-data.py
+                python3 add_data_t.py
           
           - name: Export Logs for Analysis
             if: always()
