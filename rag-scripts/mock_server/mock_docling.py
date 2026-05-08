@@ -1,6 +1,4 @@
-import requests
 import random
-import aiohttp
 import asyncio
 from contextlib import asynccontextmanager
 from aiohttp import web
