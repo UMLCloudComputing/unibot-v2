@@ -1,5 +1,7 @@
 name: Refresh DB with ETL Pipeline
 on:
+    workflow_dispatch:
+
     push: 
         branches: [ main ]
         paths: [ 'links.txt' ]
