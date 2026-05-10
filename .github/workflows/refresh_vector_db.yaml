@@ -42,7 +42,7 @@ jobs:
             
           - name: Synchronize Changes
             run: |
-                python3 mt-rag-sync-manager.py
+                python3 mt_rag_sync_manager.py
             
           - name: Handle Deleted URLs
             run: |
