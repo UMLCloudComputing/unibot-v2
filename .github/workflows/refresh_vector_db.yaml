@@ -48,7 +48,7 @@ jobs:
             
           - name: Handle Deleted URLs
             run: |
-                python3 delete-data.py
+                python3 delete_data.py
             
           - name: Handle New URLs
             run: |
