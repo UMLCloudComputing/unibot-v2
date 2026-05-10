@@ -24,7 +24,7 @@ jobs:
          
         defaults:
             run:
-                working-directory: ./rag-scripts
+                working-directory: ./rag-scripts/src/
         
         steps:
           - name: Checkout Code
