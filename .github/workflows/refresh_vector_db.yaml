@@ -30,29 +30,32 @@ jobs:
         
         steps:
           - name: Checkout Code
-            uses: actions/checkout@v4
-            
+            uses: actions/checkout@v6
+
+          - name: Install uv 
+            uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+            with:
+              enable-cache: true
+
           - name: Setup Python
             uses: actions/setup-python@v5
             with:
                 python-version: '3.14'
             
-          - name: Install dependencies
-            run: |
-                python3 -m pip install --upgrade pip
-                pip install pymilvus aiohttp httpx tqdm ollama requests
+          - name: Install ETL Project
+            run: uv sync --locked --all-extras 
             
           - name: Synchronize Changes
             run: |
-                python3 src/mt_rag_sync_manager.py
+                uv run src/mt_rag_sync_manager.py
             
           - name: Handle Deleted URLs
             run: |
-                python3 src/delete_data.py
+                uv run src/delete_data.py
             
           - name: Handle New URLs
             run: |
-                python3 src/add_data_t.py
+                uv run src/add_data_t.py
           
           - name: Export Logs for Analysis
             if: always()
