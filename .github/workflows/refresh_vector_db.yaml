@@ -26,7 +26,7 @@ jobs:
          
         defaults:
             run:
-                working-directory: ./rag-scripts/src/
+                working-directory: ./rag-scripts/
         
         steps:
           - name: Checkout Code
@@ -44,15 +44,15 @@ jobs:
             
           - name: Synchronize Changes
             run: |
-                python3 mt_rag_sync_manager.py
+                python3 src/mt_rag_sync_manager.py
             
           - name: Handle Deleted URLs
             run: |
-                python3 delete_data.py
+                python3 src/delete_data.py
             
           - name: Handle New URLs
             run: |
-                python3 add_data_t.py
+                python3 src/add_data_t.py
           
           - name: Export Logs for Analysis
             if: always()
