@@ -94,10 +94,6 @@ def delete_by_urls(file_path):
 
     pbar.close()
 
-    # MilvusClient handles flushing/consistency differently;
-    # usually, data is searchable immediately depending on consistency level.
-    # We no longer need to explicitly call collection.flush() in most use cases.
-
     logging.info(
         f"Successfully processed deletion for {total_deleted} records found within {len(urls)} target URLs."
     )
