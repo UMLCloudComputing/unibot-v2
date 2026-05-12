@@ -1,4 +1,4 @@
-# 💬 UML University Chatbot
+# unibot-v2 
 
 ## ❓ What
 
