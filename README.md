@@ -1,4 +1,7 @@
-# unibot-v2 
+<div align="center">
+    <img src="./images/unibot-v2-logo.png" alt="Logo" width="50%" height="50%"/>
+    <hr>
+</div>
 
 ## ❓ What
 
