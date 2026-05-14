@@ -2,3 +2,4 @@ volumes/
 logs/
 data/
 .venv/
+.env
