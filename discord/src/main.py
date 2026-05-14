@@ -1,6 +1,7 @@
 import discord
 from discord import app_commands
 import aiohttp
+import asyncio
 import os
 import redis
 import json
@@ -8,130 +9,124 @@ import logging
 import sys
 from dotenv import load_dotenv
 
-# 1. Structured Logging Configuration
+# 1. Logging Configuration
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+    format="%(asctime)s | %(levelname)-8s | %(message)s",
     handlers=[logging.StreamHandler(sys.stdout)],
 )
 logger = logging.getLogger("DiscordBot")
 
 load_dotenv()
 
-# Redis Configuration with logging
+# Redis Configuration
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-try:
-    r = redis.from_url(REDIS_URL, decode_responses=True)
-    r.ping()  # Verify connection on startup
-    logger.info(f"Connected to Redis at {REDIS_URL.split('@')[-1]}")
-except Exception as e:
-    logger.error(f"Failed to connect to Redis: {e}")
-    sys.exit(1)
+r = redis.from_url(REDIS_URL, decode_responses=True)
 
 
 class DiscordLLMBot(discord.Client):
     def __init__(self):
+        # IMPORTANT: Enable message_content intent to read pings
         intents = discord.Intents.default()
+        intents.message_content = True
         super().__init__(intents=intents)
         self.tree = app_commands.CommandTree(self)
 
     async def setup_hook(self):
-        logger.info("Syncing slash commands...")
         await self.tree.sync()
-        logger.info(f"Bot logged in as {self.user} (ID: {self.user.id})")
+        logger.info(f"Bot logged in as {self.user}")
+
+    # Event listener for every message sent
+    async def on_message(self, message):
+        # 1. Ignore messages sent by the bot itself
+        if message.author == self.user:
+            return
+
+        # 2. Check if the bot was mentioned (@pinged)
+        if self.user.mentioned_in(message):
+            # Clean the message to remove the <@ID> mention string
+            clean_prompt = (
+                message.content.replace(f"<@!{self.user.id}>", "")
+                .replace(f"<@{self.user.id}>", "")
+                .strip()
+            )
+
+            if not clean_prompt:
+                await message.reply(
+                    "You mentioned me, but didn't provide a prompt! How can I help?"
+                )
+                return
+
+            logger.info(f"Mention received from {message.author}: {clean_prompt}")
+
+            # Trigger typing indicator so users know the LLM is working
+            async with message.channel.typing():
+                response = await fetch_llm_response(message.author.id, clean_prompt)
+
+                # Discord character limit handling
+                if len(response) > 2000:
+                    await message.reply(response[:1990] + "...")
+                else:
+                    await message.reply(response)
 
 
 bot = DiscordLLMBot()
 
 
+# Helper functions for Redis and LLM (Logic remains the same)
 def get_history(user_id):
-    try:
-        history_json = r.get(f"session:{user_id}")
-        if history_json:
-            history = json.loads(history_json)
-            logger.debug(
-                f"Retrieved history for user {user_id} ({len(history)} messages)"
-            )
-            return history
-        return []
-    except Exception as e:
-        logger.warning(f"Error reading history for {user_id}: {e}")
-        return []
+    history_json = r.get(f"session:{user_id}")
+    return json.loads(history_json) if history_json else []
 
 
 def save_history(user_id, history):
-    try:
-        # Store history for 1 hour (3600 seconds)
-        r.setex(f"session:{user_id}", 3600, json.dumps(history[-10:]))
-        logger.debug(f"Saved history for user {user_id}")
-    except Exception as e:
-        logger.error(f"Failed to save history for {user_id}: {e}")
+    r.setex(f"session:{user_id}", 3600, json.dumps(history[-10:]))
 
 
 async def fetch_llm_response(user_id, prompt):
-    url = f"{os.getenv('OPEN_WEBUI_URL')}/chat/completions"
+    url = f"{os.getenv('OPEN_WEBUI_URL')}/api/chat/completions"
     headers = {"Authorization": f"Bearer {os.getenv('OPEN_WEBUI_KEY')}"}
-    model = os.getenv("MODEL_ID")
 
     history = get_history(user_id)
     history.append({"role": "user", "content": prompt})
 
-    payload = {"model": model, "messages": history}
-
-    logger.info(f"Sending request to LLM ({model}) for user {user_id}")
+    payload = {"model": os.getenv("MODEL_ID"), "messages": history, "stream": False}
 
     try:
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                url, json=payload, headers=headers, timeout=60
+                url, json=payload, headers=headers, timeout=90
             ) as resp:
                 if resp.status == 200:
                     data = await resp.json()
+
+                    # Obtain model response
                     ai_content = data["choices"][0]["message"]["content"]
 
+                    # Update history
                     history.append({"role": "assistant", "content": ai_content})
                     save_history(user_id, history)
 
-                    logger.info(f"Successfully received response for user {user_id}")
+                    logger.info(f"Processed response for {user_id}")
                     return ai_content
 
-                logger.error(
-                    f"LLM API Error: Status {resp.status} | Body: {await resp.text()}"
-                )
-                return f"API Error: {resp.status}"
+                error_detail = await resp.text()
+                logger.error(f"Model response error: {resp.status} - {error_detail}")
+                return f"Model Response Error: status code: {resp.status}. 🚨 Somebody call tech support!"
+    except asyncio.TimeoutError:
+        logger.error(f"Request timed out for user {user_id}")
+        return "⚠️ **Timeout**: The LLM took too long to respond. This can happen during heavy RAG document indexing."
     except Exception as e:
-        logger.exception(f"Exception during LLM request for {user_id}: {e}")
-        return f"Connection Error: {str(e)}"
+        logger.exception(f"Unexpected connection error for {user_id}")
+        return f"🚨 **Connection Error**: `{str(e)}`"
 
 
-@bot.tree.command(name="ask", description="Send a query to the LLM (Open WebUI)")
-async def ask(interaction: discord.Interaction, prompt: str):
-    user_info = f"{interaction.user} ({interaction.user.id})"
-    logger.info(f"Command /ask received from {user_info}")
-
-    await interaction.response.defer()
-    response = await fetch_llm_response(interaction.user.id, prompt)
-
-    if len(response) > 2000:
-        logger.warning(
-            f"Response for {interaction.user.id} exceeds 2000 chars; truncating."
-        )
-        await interaction.followup.send(response[:1990] + "...")
-    else:
-        await interaction.followup.send(response)
-
-
+# Slash Command for clearing history
 @bot.tree.command(name="clear", description="Clear your chat session")
 async def clear(interaction: discord.Interaction):
-    logger.info(f"Session clear requested by {interaction.user.id}")
     r.delete(f"session:{interaction.user.id}")
     await interaction.response.send_message("Session cleared!", ephemeral=True)
 
 
 if __name__ == "__main__":
-    token = os.getenv("DISCORD_TOKEN")
-    if not token:
-        logger.critical("DISCORD_TOKEN not found in environment variables!")
-        sys.exit(1)
-
-    bot.run(token, log_handler=None)  # Disable discord.py default handler to use ours
+    bot.run(os.getenv("DISCORD_TOKEN"), log_handler=None)
