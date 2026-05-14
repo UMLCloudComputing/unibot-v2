@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bot-config
+data:
+  MODEL_ID: "unibot-v2"
+  OPEN_WEBUI_URL: "http://open-webui-service:3000/api/v1"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-bot
+  template:
+    metadata:
+      labels:
+        app: discord-bot
+    spec:
+      containers:
+      - name: bot
+        image: your-registry/discord-bot:latest
+        env:
+        - name: DISCORD_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: bot-secrets
+              key: discord-token
+        - name: OPEN_WEBUI_KEY
+          valueFrom:
+            secretKeyRef:
+              name: bot-secrets
+              key: open-webui-key
+        - name: REDIS_URL
+          value: "redis://redis-service:6379/0"
+        envFrom:
+        - configMapRef:
+            name: bot-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+spec:
+  selector:
+    app: redis
+  ports:
+  - port: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine

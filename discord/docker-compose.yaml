@@ -1,0 +1,30 @@
+services:
+  # The Discord Bot Application
+  bot:
+    build: .
+    container_name: discord_llm_bot
+    restart: unless-stopped
+    volumes:
+      - ./src:/app/src
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - OPEN_WEBUI_URL=${OPEN_WEBUI_URL}
+      - OPEN_WEBUI_KEY=${OPEN_WEBUI_KEY}
+      - MODEL_ID=${MODEL_ID}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+
+  # Redis for session management and queuing
+  redis:
+    image: redis:7-alpine
+    container_name: bot_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
+
