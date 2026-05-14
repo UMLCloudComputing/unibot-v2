@@ -9,6 +9,8 @@ spec:
     namespace: openwebui
     sectionName: http 
   rules:
+
+  # For front-end
   - matches:
     - path:
         type: PathPrefix
@@ -21,3 +23,15 @@ spec:
       type: Cookie
       cookieConfig:
         lifetimeType: Session
+
+  # For stateless API requests that require longer timeouts
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /api
+    backendRefs:
+    - name: openwebui-open-webui
+      port: 80
+    timeouts:
+      request: 300s
+      backendRequest: 300s
