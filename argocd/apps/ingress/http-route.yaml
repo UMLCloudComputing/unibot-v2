@@ -32,6 +32,3 @@ spec:
     backendRefs:
     - name: openwebui-open-webui
       port: 80
-    timeouts:
-      request: 300s
-      backendRequest: 300s
