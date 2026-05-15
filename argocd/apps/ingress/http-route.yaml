@@ -9,6 +9,19 @@ spec:
     namespace: openwebui
     sectionName: http 
   rules:
+  # 1. Specific Rule for LLM API (Extended Timeouts)
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /api
+    backendRefs:
+    - name: openwebui-open-webui
+      port: 80
+    timeouts:
+      request: 300s
+      backendRequest: 300s
+
+  # 2. General Rule for Frontend (Default Timeouts)
   - matches:
     - path:
         type: PathPrefix
