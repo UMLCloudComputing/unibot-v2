@@ -17,6 +17,11 @@ spec:
     backendRefs:
     - name: openwebui-open-webui
       port: 80
+    sessionPersistence:
+      sessionName: OPEN_WEBUI_API_STICKY
+      type: Cookie
+      cookieConfig:
+        lifetimeType: Session
     timeouts:
       request: 300s
       backendRequest: 300s
