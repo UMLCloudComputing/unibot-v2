@@ -55,6 +55,7 @@ class DiscordLLMBot(discord.Client):
                 await message.reply(
                     "You mentioned me, but didn't provide a prompt! How can I help?"
                 )
+                logger.info(f"Mention received from {message.author}: No prompt")
                 return
 
             logger.info(f"Mention received from {message.author}: {clean_prompt}")
@@ -99,7 +100,7 @@ async def fetch_llm_response(user_id, prompt):
             ) as resp:
                 if resp.status == 200:
                     data = await resp.json()
-
+                    logger.info(f"API call response: {data}")
                     # Obtain model response
                     ai_content = data["choices"][0]["message"]["content"]
 
@@ -107,17 +108,17 @@ async def fetch_llm_response(user_id, prompt):
                     history.append({"role": "assistant", "content": ai_content})
                     save_history(user_id, history)
 
-                    logger.info(f"Processed response for {user_id}")
+                    logger.info("Successfully processed response")
                     return ai_content
 
                 error_detail = await resp.text()
                 logger.error(f"Model response error: {resp.status} - {error_detail}")
                 return f"Model Response Error: status code: {resp.status}. 🚨 Somebody call tech support!"
     except asyncio.TimeoutError:
-        logger.error(f"Request timed out for user {user_id}")
+        logger.error("Request timed out")
         return "⚠️ **Timeout**: The LLM took too long to respond. This can happen during heavy RAG document indexing."
     except Exception as e:
-        logger.exception(f"Unexpected connection error for {user_id}")
+        logger.exception(f"Unexpected connection error: {str(e)}")
         return f"🚨 **Connection Error**: `{str(e)}`"
 
 
