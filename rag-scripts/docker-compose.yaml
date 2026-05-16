@@ -50,6 +50,7 @@ services:
       - VECTOR_DB=milvus
       # Use the SERVICE NAME 'standalone' instead of localhost
       - MILVUS_URI=http://standalone:19530
+      - ENV=dev
     depends_on:
       - "standalone"
 
