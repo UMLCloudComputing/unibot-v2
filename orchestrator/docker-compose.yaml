@@ -1,0 +1,19 @@
+services:
+  api_stack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: unibot-v2-orchestrator
+    network_mode: "host"
+    ports:
+      - "8001:8001"  # Maps FastAPI to your local machine's port 8000
+    environment:
+      # Match the environment variables to your custom stack initialization defaults
+      - OLLAMA_HOST=http://192.168.1.207:11434
+      - MILVUS_BASE_URL=http://localhost:19530
+      - MCP_SERVER_BASE_URL=http://localhost:8000/mcp
+      - MILVUS_COLLECTION=docs
+      - OLLAMA_MODEL=gpt-oss:latest
+   
+    # Restarts the container if a connection drops temporarily during boot sequences
+    restart: on-failure
