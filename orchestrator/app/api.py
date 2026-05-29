@@ -43,9 +43,9 @@ async def handle_chat_request(payload: ChatRequest):
         formatted_history = []
         for msg in payload.history:
             if msg.role == "user":
-                formatted_history.append(HumanMessage(content=msg["content"]))
+                formatted_history.append(HumanMessage(content=msg.content))
             elif msg.role == "assistant":
-                formatted_history.append(AIMessage(content=msg["content"]))
+                formatted_history.append(AIMessage(content=msg.content))
 
         output_text = await ai_coordinator.chat(
             user_message=payload.message, chat_history=formatted_history

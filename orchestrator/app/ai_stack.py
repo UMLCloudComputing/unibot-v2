@@ -17,7 +17,7 @@ from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 # Agent State Schema
@@ -144,9 +144,10 @@ class AutonomousStack:
 
             system_prompt = SystemMessage(
                 content="You are a helpful and professional assistant specialized in information "
-                "about the University of UMass Lowell. Your name is unibot-v2."
+                "about the University of Massachusetts Lowell (UMass Lowell). Your name is unibot-v2."
                 "Refrain from answering questions that involve academic work like homework, class assignments, quizzes, or exams."
                 "If you do not know the answer to a question, clearly state so."
+                "Use the available MCP tools for any information you need that you either don't know about or are not confident about."
             )
             response = self.llm_with_tools.invoke([system_prompt] + state["messages"])
             return {"messages": [response]}

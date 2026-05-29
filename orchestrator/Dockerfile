@@ -1,5 +1,4 @@
-# Use the official uv image built on top of Debian slim
-# Specifying the Python version explicitly guarantees reproducibility
+# Use the official uv image built on top of Debian slim Specifying the Python version explicitly guarantees reproducibility
 FROM ghcr.io/astral-sh/uv:debian-slim
 
 # Set the working directory inside the container
@@ -13,11 +12,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # 1. Compile Python source files to bytecode (.pyc) for faster container startup times
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_NO_DEV=1
-# 2. Use copy mode instead of hardlinks (hardlinks don't work reliably across container layers)
-# ENV UV_LINK_MODE=copy
-
-# 3. Tell uv to look inside the system container context for Python rather than downloading an alternative
-# ENV UV_PYTHON_DOWNLOADS=0
 
 # --- Dependency Installation ---
 # Copy ONLY the lockfile and project configuration files first to maximize Docker layer caching
