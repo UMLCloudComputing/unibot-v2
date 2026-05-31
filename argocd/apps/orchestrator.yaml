@@ -8,7 +8,7 @@ metadata:
 spec:
   project: unibot-v2
   source: 
-    repoURL: httpL//github.com/UMLCloudComputing/unibot-v2.git
+    repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
     targetRevision: HEAD
     path: orchestrator/k8s
   destination:
