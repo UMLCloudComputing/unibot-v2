@@ -1,0 +1,23 @@
+apiVerison: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: unibot-orchestrator
+  namespace: argocd
+  annotations: 
+    argocd.argproj.io/sync-wave: "10"
+spec:
+  project: unibot-v2
+  source: 
+    repoURL: httpL//github.com/UMLCloudComputing/unibot-v2.git
+    targetRevision: HEAD
+    path: orchestrator/k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
