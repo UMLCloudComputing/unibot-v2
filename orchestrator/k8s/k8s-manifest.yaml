@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: orchestrator
-          image: ghcr.io/umlcloudcomputing/unibot-v2-api-orchestrator:latest
+          image: ghcr.io/umlcloudcomputing/unibot-v2-orchestrator:latest
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 8001
