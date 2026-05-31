@@ -5,6 +5,7 @@ metadata:
 data:
   MCP_SERVER_BASE_URL: http://uml-now-mcp-svc.mcp.svc.cluster.local
   MILVUS_COLLECTION: docs
+  MILVUS_BASE_URL: http://milvus-cluster-milvus.milvus-cluster.svc.cluster.local
   OLLAMA_MODEL: gpt-oss:latest
   OLLAMA_BASE_URL: http://192.168.1.207:11434 
 ---
