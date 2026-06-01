@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: streamlit
+  namespace: argocd
+spec:
+  project: unibot-v2
+  source:
+    repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
+    targetRevision: main
+    path: streamlit-app/k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: streamlit-ui
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
