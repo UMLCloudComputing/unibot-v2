@@ -64,7 +64,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: streamlit-ui-service
+  name: streamlit-ui-svc
   labels:
     app: streamlit-ui
 spec:
