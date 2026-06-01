@@ -9,9 +9,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: streamlit-ui-config
-  namespace: stremalit-ui
+  namespace: streamlit-ui
   labels:
-    app: stremalit-ui
+    app: streamlit-ui
 # Update as needed
 data:
   ORCHESTRATOR_API_URL: http://api-orchestrator-svc.api-orchestrator.svc.cluster.local 
