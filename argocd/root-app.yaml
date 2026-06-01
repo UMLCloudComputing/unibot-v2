@@ -35,8 +35,6 @@ spec:
           server: 'https://kubernetes.default.svc'
         - namespace: 'envoy-gateway-operator'
           server: 'https://kubernetes.default.svc'
-        - namespace: 'openwebui'
-          server: 'https://kubernetes.default.svc'
         - namespace: 'cloudflare'
           server: 'https://kubernetes.default.svc'
         - namespace: 'mcp'
