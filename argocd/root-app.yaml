@@ -16,7 +16,6 @@ spec:
         - 'https://charts.bitnami.com/bitnami'
         - 'registry-1.docker.io/bitnamicharts'
         - 'docker.io/envoyproxy'
-        - 'https://open-webui.github.io/helm-charts'
         - 'ghcr.io/UMLCloudComputing'
     destinations:
         - namespace: 'milvus-cluster'
