@@ -41,7 +41,7 @@ spec:
           server: 'https://kubernetes.default.svc'
         - namespace: 'mcp'
           server: 'https://kubernetes.default.svc'
-        - namespace: 'orchestrator'
+        - namespace: 'api-orchestrator'
           server: 'https://kubernetes.default.svc'
     clusterResourceWhitelist:
         - group: '*'

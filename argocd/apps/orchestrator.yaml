@@ -13,7 +13,7 @@ spec:
     path: orchestrator/k8s
   destination:
     server: https://kubernetes.default.svc
-    namespace: orchestrator
+    namespace: api-orchestrator
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
