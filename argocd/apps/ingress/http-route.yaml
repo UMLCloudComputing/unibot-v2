@@ -7,13 +7,13 @@ spec:
   parentRefs:
     - name: streamlit-ui-gateway-class
   rules:
-    - matches:
-      - path: 
-          type: PathPrefix
-          value: /
-      backendRefs:
-        - name: streamlit-ui-svc
-          port: 8001
+  - matches:
+    - path: 
+        type: PathPrefix
+        value: /
+    backendRefs:
+      - name: streamlit-ui-svc
+        port: 8001
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: RoutePolicy
