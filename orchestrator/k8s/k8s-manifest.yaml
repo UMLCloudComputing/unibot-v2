@@ -1,4 +1,3 @@
----
 apiVerison: v1
 kind: Namespace
 metadata:
