@@ -1,0 +1,15 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: streamlit-ui-gateway-class
+  namespace: streamlit-ui
+spec:
+  gatewayClassName: envoy-gateway-class
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 8001
+      allowedRoutes:
+        namespaces:
+          from: Same
+
