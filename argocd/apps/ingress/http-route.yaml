@@ -2,33 +2,23 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: streamlit-ui-route
-  namespace: chat-app
+  namespace: streamlit-ui
 spec:
   parentRefs:
-    - name: streamlit-ui-gateway-class
+  - name: streamlit-ui-gateway
+    namespace: streamlit-ui 
+    sectionName: http
   rules:
   - matches:
     - path: 
         type: PathPrefix
         value: /
     backendRefs:
-      - name: streamlit-ui-svc
-        port: 8001
----
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: RoutePolicy
-metadata:
-  name: streamlit-sticky-policy
-  namespace: streamlit-ui
-spec:
-  targetRefs:
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      name: streamlit-ui-route
-    loadBalancer:
-      type: ConsistentHash
-      consistentHash:
-        type: Cookie
-        cookie: 
-          name: STREAMLIT_SESSION
-          ttl: 0s
+    - name: streamlit-ui-svc
+      port: 8001
+    sessionPersistence:
+      sessionName: UNIBOT-UI-SESSIONS
+      type: Cookie
+      cookieConfig:
+        lifetimeType: Session
+
