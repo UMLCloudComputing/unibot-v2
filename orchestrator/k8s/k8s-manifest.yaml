@@ -13,7 +13,7 @@ metadata:
   labels:
     app: api-orchestrator
 data:
-  MCP_SERVER_BASE_URL: http://uml-now-mcp-svc.mcp.svc.cluster.local:8000
+  MCP_SERVER_BASE_URL: http://uml-now-mcp-svc.mcp.svc.cluster.local:8000/mcp
   MILVUS_COLLECTION: docs
   MILVUS_BASE_URL: http://milvus-cluster-milvus.milvus-cluster.svc.cluster.local:19530
   OLLAMA_MODEL: gpt-oss:latest
