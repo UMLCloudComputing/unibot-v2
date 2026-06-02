@@ -3,7 +3,8 @@ on:
     workflow_dispatch:
     push: 
         branches: [ main ]
-        paths: [ 'orchestrator/' ]
+        paths: 
+          - 'orchestrator/**'
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/unibot-v2-orchestrator

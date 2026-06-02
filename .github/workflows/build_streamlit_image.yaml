@@ -3,7 +3,7 @@ on:
     workflow_dispatch:
     push: 
         branches: [ main ]
-        paths: [ 'streamlit-app/' ]
+        paths: [ 'streamlit-app/**' ]
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/unibot-v2-streamlit
