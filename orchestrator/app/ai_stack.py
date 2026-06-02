@@ -17,7 +17,7 @@ from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 
 # Agent State Schema
