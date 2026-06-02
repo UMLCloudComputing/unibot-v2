@@ -14,7 +14,7 @@ metadata:
     app: streamlit-ui
 # Update as needed
 data:
-  ORCHESTRATOR_API_URL: http://api-orchestrator-svc.api-orchestrator.svc.cluster.local:8001
+  ORCHESTRATOR_API_URL: http://api-orchestrator-svc.api-orchestrator.svc.cluster.local:8001/v1/chat
 ---
 apiVersion: apps/v1
 kind: Deployment
