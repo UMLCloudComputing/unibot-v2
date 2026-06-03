@@ -31,4 +31,4 @@ RUN uv sync --frozen --no-install-project --no-dev
 RUN uv sync --frozen --no-dev
 
 # Replicate native behavior: 'uv run' handles the venv internally
-CMD ["uv", "run", "src/main.py"]
+CMD ["uv", "run", "app/main.py"]
