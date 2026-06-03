@@ -15,7 +15,7 @@ spec:
         value: /
     backendRefs:
     - name: streamlit-ui-svc
-      port: 8501
+      port: 80
     sessionPersistence:
       sessionName: UNIBOT-UI-SESSIONS
       type: Cookie

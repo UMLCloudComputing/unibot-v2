@@ -72,6 +72,6 @@ spec:
     app: streamlit-ui
   ports:
     - protocol: TCP
-      port: 8501
+      port: 80
       targetPort: 8501
   type: ClusterIP
