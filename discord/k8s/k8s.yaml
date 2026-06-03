@@ -12,7 +12,7 @@ metadata:
   labels:
     app: discord-bot
 data:
-  REDIS_URL: http://redis-headless.redis.svc.cluster.local
+  REDIS_URL: redis://redis-headless.redis.svc.cluster.local
   ORCHESTRATOR_URL: http://api-orchestrator-svc.api-orchestrator.svc.cluster.local
 ---
 apiVersion: apps/v1
