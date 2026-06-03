@@ -24,11 +24,7 @@ spec:
                   image: 
                     tag: sha256-97b20eafbc1e8a63fa244920980aeb81e686232a989a68f5379db73032d0b1a8 
                 auth:
-                  enabled: true
-                  existingSecret: "redis-creds"
-                  existingSecretPasswordKey: "redis-password"
-                  usePasswordFiles: false
-                  usePasswordFileFromSecret: false
+                  enabled: false
     destination:
         server: 'https://kubernetes.default.svc'
         namespace: redis 
