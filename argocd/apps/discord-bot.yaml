@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: streamlit
+  name: discord-bot
   namespace: argocd
 spec:
   project: unibot-v2
   source:
     repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
     targetRevision: main
-    path: streamlit/k8s
+    path: discord/k8s
   destination:
     server: https://kubernetes.default.svc
-    namespace: streamlit-ui
+    namespace: discord-bot
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
