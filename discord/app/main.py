@@ -7,7 +7,6 @@ import redis
 import json
 import logging
 import sys
-from dotenv import load_dotenv
 
 # 1. Logging Configuration
 logging.basicConfig(
@@ -17,10 +16,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger("DiscordBot")
 
-load_dotenv()
-
 # Redis Configuration
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+ORCHESTRATOR_API_URL = os.getenv("ORCHESTRATOR_URL", "http://localhost:8001/v1/chat")
 r = redis.from_url(REDIS_URL, decode_responses=True)
 
 
@@ -60,7 +58,7 @@ class DiscordLLMBot(discord.Client):
 
             logger.info(f"Mention received from {message.author}: {clean_prompt}")
 
-            # Trigger typing indicator so users know the LLM is working
+            # Trigger typing indicator so users know the Orchestrator/LLM is working
             async with message.channel.typing():
                 response = await fetch_llm_response(message.author.id, clean_prompt)
 
@@ -74,7 +72,7 @@ class DiscordLLMBot(discord.Client):
 bot = DiscordLLMBot()
 
 
-# Helper functions for Redis and LLM (Logic remains the same)
+# Helper functions for Redis and LLM
 def get_history(user_id):
     history_json = r.get(f"session:{user_id}")
     return json.loads(history_json) if history_json else []
@@ -85,40 +83,44 @@ def save_history(user_id, history):
 
 
 async def fetch_llm_response(user_id, prompt):
-    url = f"{os.getenv('OPEN_WEBUI_URL')}/api/chat/completions"
-    headers = {"Authorization": f"Bearer {os.getenv('OPEN_WEBUI_KEY')}"}
-
+    # Get context history from Redis cache layer
     history = get_history(user_id)
-    history.append({"role": "user", "content": prompt})
 
-    payload = {"model": os.getenv("MODEL_ID"), "messages": history, "stream": False}
+    # { "message": "...", "history": [{"role": "...", "content": "..."}] }
+    payload = {"message": prompt, "history": history}
 
     try:
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                url, json=payload, headers=headers, timeout=90
+                ORCHESTRATOR_API_URL, json=payload, timeout=120
             ) as resp:
                 if resp.status == 200:
                     data = await resp.json()
-                    logger.info(f"API call response: {data}")
-                    # Obtain model response
-                    ai_content = data["choices"][0]["message"]["content"]
+                    logger.info(f"Orchestrator response data: {data}")
 
-                    # Update history
+                    ai_content = data["response"].get(
+                        "content", "Error: No response message parsed."
+                    )
+
+                    # Update history array and save back down to your Redis cache
+                    history.append({"role": "user", "content": prompt})
                     history.append({"role": "assistant", "content": ai_content})
                     save_history(user_id, history)
 
-                    logger.info("Successfully processed response")
+                    logger.info("Successfully processed response from Orchestrator")
                     return ai_content
 
                 error_detail = await resp.text()
-                logger.error(f"Model response error: {resp.status} - {error_detail}")
-                return f"Model Response Error: status code: {resp.status}. 🚨 Somebody call tech support!"
+                logger.error(
+                    f"Orchestrator response error: {resp.status} - {error_detail}"
+                )
+                return f"Orchestrator Error: Status code {resp.status}. 🚨 The request couldn't be routed."
+
     except asyncio.TimeoutError:
-        logger.error("Request timed out")
-        return "⚠️ **Timeout**: The LLM took too long to respond. This can happen during heavy RAG document indexing."
+        logger.error("Orchestrator request timed out")
+        return "⚠️ **Timeout**: The orchestrator agent graph took too long processing tools or models."
     except Exception as e:
-        logger.exception(f"Unexpected connection error: {str(e)}")
+        logger.exception(f"Unexpected orchestration connection error: {str(e)}")
         return f"🚨 **Connection Error**: `{str(e)}`"
 
 

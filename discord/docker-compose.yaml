@@ -2,23 +2,24 @@ services:
   # The Discord Bot Application
   bot:
     build: .
-    container_name: discord_llm_bot
+    container_name: discord_bot
+    network_mode: "host"
     restart: unless-stopped
     volumes:
       - ./src:/app/src
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
-      - OPEN_WEBUI_URL=${OPEN_WEBUI_URL}
-      - OPEN_WEBUI_KEY=${OPEN_WEBUI_KEY}
-      - MODEL_ID=${MODEL_ID}
-      - REDIS_URL=redis://redis:6379/0
+      - ORCHESTRATOR_URL=http://localhost:8001/v1/chat # Expects orchestrator to be accessible at `http://localhost:8001` on the host device's network space
+      - REDIS_URL=redis://localhost:6379/0
     depends_on:
       - redis
 
   # Redis for session management and queuing
   redis:
     image: redis:7-alpine
-    container_name: bot_redis
+    container_name: redis_cache
     restart: unless-stopped
     ports:
       - "6379:6379"
