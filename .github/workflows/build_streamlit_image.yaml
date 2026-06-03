@@ -3,7 +3,7 @@ on:
     workflow_dispatch:
     push: 
         branches: [ main ]
-        paths: [ 'streamlit-app/**' ]
+        paths: [ 'streamlit/app/**' ]
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/unibot-v2-streamlit
@@ -39,7 +39,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./streamlit-app
+          context: ./streamlit
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
