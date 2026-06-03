@@ -6,8 +6,6 @@ metadata:
 spec:
   parentRefs:
   - name: streamlit-ui-gateway
-    namespace: streamlit-ui 
-    sectionName: http
   rules:
   - matches:
     - path: 
@@ -15,7 +13,7 @@ spec:
         value: /
     backendRefs:
     - name: streamlit-ui-svc
-      port: 80
+      port: 8501
     sessionPersistence:
       sessionName: UNIBOT-UI-SESSIONS
       type: Cookie
