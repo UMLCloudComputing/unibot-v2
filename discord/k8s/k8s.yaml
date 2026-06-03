@@ -1,15 +1,26 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: 
+  labels:
+    app: discord-bot
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: bot-config
+  labels:
+    app: discord-bot
 data:
   REDIS_URL: http://redis-headless.redis.svc.cluster.local
-  ORCHESTRATOR_URL: http://
+  ORCHESTRATOR_URL: http://api-orchestrator-svc.api-orchestrator.svc.cluster.local
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: discord-bot
+  labels:
+    app: discord-bot
 spec:
   replicas: 1
   selector:
