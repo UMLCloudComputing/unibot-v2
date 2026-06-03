@@ -6,9 +6,7 @@ services:
     network_mode: "host"
     restart: unless-stopped
     volumes:
-      - ./src:/app/src
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - ./app:/app/app
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
       - ORCHESTRATOR_URL=http://localhost:8001/v1/chat # Expects orchestrator to be accessible at `http://localhost:8001` on the host device's network space

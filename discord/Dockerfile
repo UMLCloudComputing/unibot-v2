@@ -25,10 +25,12 @@ RUN uv sync --frozen --no-install-project --no-dev
 
 # 3. Copy the source code
 # Note: Ensure the path matches your project structure (e.g., src/main.py)
-# COPY src/ ./src/
+COPY ./app /app
 
 # 4. Final sync to include the project itself
 RUN uv sync --frozen --no-dev
 
+ENV PATH="/app/.venv/bin:$PATH"
+
 # Replicate native behavior: 'uv run' handles the venv internally
-CMD ["uv", "run", "app/main.py"]
+CMD ["uv", "run", "main.py"]
