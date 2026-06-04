@@ -30,10 +30,6 @@ class DiscordLLMBot(discord.Client):
         super().__init__(intents=intents)
         self.tree = app_commands.CommandTree(self)
 
-    async def setup_hook(self):
-        await self.tree.sync()
-        logger.info(f"Bot logged in as {self.user}")
-
     # Event listener for every message sent
     async def on_message(self, message):
         # 1. Ignore messages sent by the bot itself
@@ -118,10 +114,20 @@ async def fetch_llm_response(user_id, prompt):
 
     except asyncio.TimeoutError:
         logger.error("Orchestrator request timed out")
-        return "⚠️ **Timeout**: The orchestrator agent graph took too long processing tools or models."
+        return (
+            "⚠️ **Timeout**: The orchestrator took too long processing tools or models."
+        )
     except Exception as e:
         logger.exception(f"Unexpected orchestration connection error: {str(e)}")
-        return f"🚨 **Connection Error**: `{str(e)}`"
+        return "🚨 **Connection Error**: Please reach out to the devs!"
+
+
+async def setup_hook():
+    await bot.tree.sync()
+    logger.info("Synced commands globally.")
+
+
+bot.setup_hook = setup_hook
 
 
 # Slash Command for clearing history
@@ -133,3 +139,4 @@ async def clear(interaction: discord.Interaction):
 
 if __name__ == "__main__":
     bot.run(os.getenv("DISCORD_TOKEN"), log_handler=None)
+
