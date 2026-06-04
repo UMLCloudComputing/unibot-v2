@@ -22,6 +22,12 @@ ORCHESTRATOR_API_URL = os.getenv("ORCHESTRATOR_URL", "http://localhost:8001/v1/c
 r = redis.from_url(REDIS_URL, decode_responses=True)
 
 
+# Slash Command for clearing history
+async def clear(interaction: discord.Interaction):
+    r.delete(f"session:{interaction.user.id}")
+    await interaction.response.send_message("Session cleared!", ephemeral=True)
+
+
 class DiscordLLMBot(discord.Client):
     def __init__(self):
         # IMPORTANT: Enable message_content intent to read pings
@@ -29,6 +35,14 @@ class DiscordLLMBot(discord.Client):
         intents.message_content = True
         super().__init__(intents=intents)
         self.tree = app_commands.CommandTree(self)
+        self.tree.add_command(clear)
+
+    async def setup_hook(self):
+        await self.tree.sync()
+        logger.info("Synced slash commands.")
+
+    async def on_ready(self):
+        logger.info(f"Bot logged in as {self.user}")
 
     # Event listener for every message sent
     async def on_message(self, message):
@@ -120,21 +134,6 @@ async def fetch_llm_response(user_id, prompt):
     except Exception as e:
         logger.exception(f"Unexpected orchestration connection error: {str(e)}")
         return "🚨 **Connection Error**: Please reach out to the devs!"
-
-
-async def setup_hook():
-    await bot.tree.sync()
-    logger.info("Synced commands globally.")
-
-
-bot.setup_hook = setup_hook
-
-
-# Slash Command for clearing history
-@bot.tree.command(name="clear", description="Clear your chat session")
-async def clear(interaction: discord.Interaction):
-    r.delete(f"session:{interaction.user.id}")
-    await interaction.response.send_message("Session cleared!", ephemeral=True)
 
 
 if __name__ == "__main__":
