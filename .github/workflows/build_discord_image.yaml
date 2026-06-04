@@ -4,7 +4,7 @@ on:
     push: 
         branches: [ main ]
         paths: 
-          - 'discord/src/**'
+          - 'discord/app/**'
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/unibot-v2-discord-bot
