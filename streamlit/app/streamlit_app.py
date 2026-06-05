@@ -128,7 +128,7 @@ if user_message:
                 response = httpx.post(
                     ORCHESTRATOR_API_URL,
                     json=request_body,
-                    timeout=120.0,  # High timeout for deep agentic multi-tool loop execution
+                    timeout=240.0,  # High timeout for deep agentic multi-tool loop execution
                 )
 
                 if response.status_code == 200:
@@ -158,6 +158,4 @@ if user_message:
                     )
 
             except httpx.RequestError as exc:
-                st.error(
-                    f"Unable to establish link with API Coordinator Gateway: {str(exc)}"
-                )
+                st.error(f"API Orchestrator Gateway error: {str(exc)}")

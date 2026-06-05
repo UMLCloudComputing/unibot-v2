@@ -94,7 +94,7 @@ async def fetch_llm_response(user_id, prompt):
     try:
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                ORCHESTRATOR_API_URL, json=payload, timeout=120
+                ORCHESTRATOR_API_URL, json=payload, timeout=240
             ) as resp:
                 if resp.status == 200:
                     data = await resp.json()
@@ -116,7 +116,7 @@ async def fetch_llm_response(user_id, prompt):
                 logger.error(
                     f"Orchestrator response error: {resp.status} - {error_detail}"
                 )
-                return f"Orchestrator Error: Status code {resp.status}. 🚨 The request couldn't be routed."
+                return f"Orchestrator Error: Status code {resp.status}. 🚨 The request responded with an error. Somebody check the logs."
 
     except asyncio.TimeoutError:
         logger.error("Orchestrator request timed out")
