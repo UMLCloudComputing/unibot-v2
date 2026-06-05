@@ -3,9 +3,6 @@ kind: Application
 metadata:
   name: discord-bot
   namespace: argocd
-  # Temporarily disable sync
-  annotations:
-    argocd.argoproj.io/skip-reconcile: "true"
 spec:
   project: unibot-v2
   source:
