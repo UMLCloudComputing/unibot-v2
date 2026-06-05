@@ -1,6 +1,7 @@
 import logging
 from typing import List, Optional, Dict, Any, Annotated
 from typing_extensions import TypedDict
+from datetime import timedelta
 
 # Core integrations
 from pymilvus import connections
@@ -104,6 +105,8 @@ class AutonomousStack:
                     "url": self.mcp_server_url,
                     "transport": "streamable_http",
                     "headers": headers,
+                    "timeout": timedelta(seconds=120),
+                    "sse_read_timeout": timedelta(seconds=600),
                 }
             }
         )
