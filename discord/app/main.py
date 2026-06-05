@@ -1,5 +1,6 @@
 import discord
 from discord import app_commands
+from discord.ext import commands
 import aiohttp
 import asyncio
 import os
@@ -22,24 +23,15 @@ ORCHESTRATOR_API_URL = os.getenv("ORCHESTRATOR_URL", "http://localhost:8001/v1/c
 r = redis.from_url(REDIS_URL, decode_responses=True)
 
 
-# Slash Command for clearing history
-async def clear(interaction: discord.Interaction):
-    r.delete(f"session:{interaction.user.id}")
-    await interaction.response.send_message("Session cleared!", ephemeral=True)
-
-
-class DiscordLLMBot(discord.Client):
+class DiscordLLMBot(commands.Bot):
     def __init__(self):
-        # IMPORTANT: Enable message_content intent to read pings
         intents = discord.Intents.default()
         intents.message_content = True
-        super().__init__(intents=intents)
-        self.tree = app_commands.CommandTree(self)
-        self.tree.add_command(clear)
+        super().__init__(command_prefix="!", intents=intents)
 
     async def setup_hook(self):
-        await self.tree.sync()
-        logger.info("Synced slash commands.")
+        commands = await self.tree.sync()
+        logger.info(f"Synced {len(commands)} slash commands.")
 
     async def on_ready(self):
         logger.info(f"Bot logged in as {self.user}")
@@ -136,6 +128,13 @@ async def fetch_llm_response(user_id, prompt):
         return "🚨 **Connection Error**: Please reach out to the devs!"
 
 
+# Slash Command for clearing history
+@bot.tree.command(name="clear", description="Clear your chat session history")
+async def clear(interaction: discord.Interaction):
+    r.delete(f"session:{interaction.user.id}")
+    logger.info("Chat session data cleared from Redis")
+    await interaction.response.send_message("Session cleared!", ephemeral=True)
+
+
 if __name__ == "__main__":
     bot.run(os.getenv("DISCORD_TOKEN"), log_handler=None)
-

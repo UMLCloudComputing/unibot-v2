@@ -24,7 +24,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-install-project --no-dev
 
 # 3. Copy the source code
-# Note: Ensure the path matches your project structure (e.g., src/main.py)
+# Note: Ensure the path matches your project structure (e.g., app/main.py)
 COPY ./app /app
 
 # 4. Final sync to include the project itself
