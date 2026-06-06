@@ -13,7 +13,7 @@ services:
       - MILVUS_BASE_URL=http://localhost:19530
       - MCP_SERVER_BASE_URL=http://localhost:8000/mcp
       - MILVUS_COLLECTION=docs
-      - OLLAMA_MODEL=gpt-oss:latest
-   
+      - OLLAMA_MODEL=gemma4:12b
+
     # Restarts the container if a connection drops temporarily during boot sequences
     restart: on-failure

@@ -86,7 +86,7 @@ class AutonomousStack:
 
     async def _initialize_graph_if_needed(self):
         """
-        Asynchronously boots teh client connections and compiles the
+        Asynchronously boots the client connections and compiles the
         LangGraph instance
         """
 
@@ -134,7 +134,11 @@ class AutonomousStack:
         )
         # 3. Instantiate the model and bind all tools
         llm = ChatOllama(
-            model=self.model_name, base_url=self.ollama_base_url, temperature=0.2
+            model=self.model_name,
+            base_url=self.ollama_base_url,
+            temperature=1.0,
+            top_p=0.95,
+            top_k=64,
         )
         self.llm_with_tools = llm.bind_tools(all_tools) if all_tools else llm
 
