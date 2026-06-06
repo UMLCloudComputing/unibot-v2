@@ -8,6 +8,7 @@ import redis
 import json
 import logging
 import sys
+import io
 
 # 1. Logging Configuration
 logging.basicConfig(
@@ -66,7 +67,13 @@ class DiscordLLMBot(commands.Bot):
 
                 # Discord character limit handling
                 if len(response) > 2000:
-                    await message.reply(response[:1990] + "...")
+                    text_stream = io.StringIO(response)
+                    response_file = discord.File(
+                        fp=text_stream, filename="full_response.txt"
+                    )
+                    await message.reply(
+                        content=response[:1990] + "...", file=response_file
+                    )
                 else:
                     await message.reply(response)
 
@@ -130,10 +137,34 @@ async def fetch_llm_response(user_id, prompt):
 
 # Slash Command for clearing history
 @bot.tree.command(name="clear", description="Clear your chat session history")
-async def clear(interaction: discord.Interaction):
+async def clear_command(interaction: discord.Interaction):
     r.delete(f"session:{interaction.user.id}")
     logger.info("Chat session data cleared from Redis")
     await interaction.response.send_message("Session cleared!", ephemeral=True)
+
+
+# Slash command for getting session history
+@bot.tree.command(name="get_history", description="Obtain your conversation history")
+async def get_history_command(interaction: discord.Interaction):
+    history = get_history(interaction.user.id)
+    if not history:
+        await interaction.response.send_message(
+            "You don't have an active session history", ephemeral=True
+        )
+        return
+
+    formatted_transcript = ""
+    for turn in history:
+        formatted_transcript += f"[{turn['role'].upper()}]: {turn['content']}\n\n"
+
+    text_stream = io.StringIO(formatted_transcript)
+    response_file = discord.File(fp=text_stream, filename="session_transcript.txt")
+
+    await discord.response.send_message(
+        content="Your requested session history is attached.",
+        file=response_file,
+        emepheral=True,  # Keeps it private to the user
+    )
 
 
 if __name__ == "__main__":
