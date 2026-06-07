@@ -5,11 +5,13 @@ This service acts as the orchestrator for the unibot-v2 application, providing a
 ## Overview
 
 The orchestrator service is responsible for:
+
 - Handling incoming chat requests via a FastAPI endpoint (`/v1/chat`)
 - Coordinating with a local Ollama model for text generation and embeddings
 - Retrieving relevant context from a Milvus vector store
 - Fetching and utilizing tools from a remote MCP server
 - Combining these components to produce informed, contextual responses
+- Providing health check endpoints for Kubernetes monitoring
 
 ## Project Structure
 
@@ -17,31 +19,39 @@ The orchestrator service is responsible for:
 orchestrator/
 ├── app/
 │   ├── api.py          # FastAPI application and endpoint definitions
-│   └── ai_stack.py     # UnifiedRemoteAIStack class orchestrating AI components
+│   └── ai_stack.py     # AutonomousStack class orchestrating AI components using LangGraph
 ├── Dockerfile          # Containerization configuration
 ├── pyproject.toml      # Project metadata and dependencies
 ├── uv.lock             # Dependency lock file
 ├── CLAUDE.md           # This file - guidance for Claude Code
 ├── README.md           # This file - service overview
 ├── .env                # Environment variables (not tracked)
-├── k8s-manifest.yaml   # Kubernetes deployment manifest
+├── k8s/
+│   └── k8s-manifest.yaml   # Kubernetes deployment manifests
 └── .venv/              # Python virtual environment (UV managed)
 ```
 
 ## Key Components
 
 ### API Layer (`app/api.py`)
+
 - Defines the FastAPI application
-- Exposes the `/v1/chat` POST endpoint
+- Exposes the `/v1/chat` POST endpoint for chat interactions
+- Exposes the `/health` GET endpoint for Kubernetes liveness/readiness probes
 - Handles request/response formatting and error handling
 
 ### AI Stack (`app/ai_stack.py`)
-- Implements `UnifiedRemoteAIStack` class
+
+- Implements `AutonomousStack` class using LangGraph for orchestration
 - Manages connections to:
-  - Milvus vector store for document retrieval
-  - Ollama for embeddings (`nomic-embed-text`) and language generation (`gpt-oss:latest`)
+  - Milvus vector store for document retrieval (using Ollama nomic-embed-text embeddings)
+  - Ollama for language generation (configurable model, default: gpt-oss:latest)
   - Remote MCP server for tool discovery and execution
-- Orchestrates the RAG pipeline: retrieve context → format prompt → invoke LLM with available tools
+- Orchestrates an autonomous agent workflow:
+  - Processes user messages with conversation history
+  - Uses LangGraph to dynamically choose between RAG, MCP tools, or direct LLM responses
+  - Includes a system prompt that specializes the assistant for UMass Lowell information
+  - Refuses to answer academic work-related questions and states when it doesn't know answers
 
 ## Environment Variables
 
@@ -55,31 +65,54 @@ The service requires the following environment variables (typically set in `.env
 
 ## Installation & Setup
 
+### Local Development
+
 1. Install dependencies using UV:
+
    ```bash
    uv sync
    ```
 
 2. Ensure required services are running:
    - Milvus vector store
-   - Ollama with the specified model
+   - Ollama with the specified model (default: gpt-oss:latest)
    - Remote MCP server
 
 3. Start the service:
+
    ```bash
    python app/api.py
    ```
+
    or using uvicorn directly:
+
    ```bash
    uvicorn app.api:app --host 0.0.0.0 --port 8001 --reload
    ```
 
+### Kubernetes Deployment
+
+The service can be deployed to Kubernetes using the manifests in the `k8s/` directory:
+
+```bash
+kubectl apply -f k8s/k8s-manifest.yaml
+```
+
+The Kubernetes deployment includes:
+
+- Namespace: `api-orchestrator`
+- ConfigMap with environment variables
+- Deployment with 2 replicas
+- Service exposing the API on port 8001
+
 ## API Endpoints
 
 ### POST `/v1/chat`
+
 Send a chat request to receive a response from the AI system.
 
 **Request Body:**
+
 ```json
 {
   "message": "Your question here",
@@ -91,6 +124,7 @@ Send a chat request to receive a response from the AI system.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -99,15 +133,19 @@ Send a chat request to receive a response from the AI system.
 ```
 
 ### GET `/health`
+
 Health check endpoint for Kubernetes liveness/readiness probes.
 
 **Response:**
+
 ```json
 {
   "status": "healthy"
 }
 ```
+
 or
+
 ```json
 {
   "status": "unhealthy",
