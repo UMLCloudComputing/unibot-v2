@@ -3,14 +3,15 @@ import re
 from urllib.robotparser import RobotFileParser
 from urllib.parse import urlparse
 
+
 def get_allowed_urls(domain):
     # Ensure domain has a scheme
-    if not domain.startswith('http'):
-        domain = 'https://' + domain
-    
+    if not domain.startswith("http"):
+        domain = "https://" + domain
+
     robots_url = f"{domain.rstrip('/')}/robots.txt"
     sitemap_url = f"{domain.rstrip('/')}/sitemap.xml"
-    
+
     # 1. Setup Robot Framework
     rp = RobotFileParser()
     rp.set_url(robots_url)
@@ -29,8 +30,8 @@ def get_allowed_urls(domain):
         return
 
     # 3. Extract URLs using Regex (simple and effective for <loc> tags)
-    raw_urls = re.findall(r'<loc>(.*?)</loc>', response.text)
-    
+    raw_urls = re.findall(r"<loc>(.*?)</loc>", response.text)
+
     # 4. Filter by robots.txt permissions
     allowed_urls = []
     for url in raw_urls:
@@ -42,10 +43,11 @@ def get_allowed_urls(domain):
     with open(output_file, "w") as f:
         for url in allowed_urls:
             f.write(url + "\n")
-            
+
     print(f"Success! {len(allowed_urls)} URLs saved to {output_file}")
+
 
 # Example usage:
 # get_allowed_urls("example.com")
 if __name__ == "__main__":
-  get_allowed_urls("uml.edu")
+    get_allowed_urls("uml.edu")
