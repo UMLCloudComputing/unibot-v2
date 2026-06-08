@@ -160,7 +160,7 @@ async def get_history_command(interaction: discord.Interaction):
     text_stream = io.StringIO(formatted_transcript)
     response_file = discord.File(fp=text_stream, filename="session_transcript.txt")
 
-    await discord.response.send_message(
+    await interaction.response.send_message(
         content="Your requested session history is attached.",
         file=response_file,
         emepheral=True,  # Keeps it private to the user
