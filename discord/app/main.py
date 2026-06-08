@@ -163,7 +163,7 @@ async def get_history_command(interaction: discord.Interaction):
     await interaction.response.send_message(
         content="Your requested session history is attached.",
         file=response_file,
-        emepheral=True,  # Keeps it private to the user
+        ephemeral=True,  # Keeps it private to the user
     )
 
 
