@@ -20,7 +20,7 @@ st.set_page_config(
 )
 
 st.image(
-    "https://raw.githubusercontent.com/UMLCloudComputing/unibot-v2/refs/heads/main/images/unibot-v2_Logo-transparent.png",
+    "https://raw.githubusercontent.com/UMLCloudComputing/unibot-v2/refs/heads/main/images/unibot-v2-logo-light.png",
     use_container_width=True,
 )
 
