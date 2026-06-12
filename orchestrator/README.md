@@ -1,14 +1,13 @@
 # Orchestrator Service
 
-This service acts as the orchestrator for the unibot-v2 application, providing a REST API endpoint for chat interactions that leverage Retrieval-Augmented Generation (RAG) and remote Model Context Protocol (MCP) tools.
+This service acts as the orchestrator for the unibot-v2 application, providing a REST API endpoint for chat interactions that leverage remote Model Context Protocol (MCP) tools.
 
 ## Overview
 
 The orchestrator service is responsible for:
 
 - Handling incoming chat requests via a FastAPI endpoint (`/v1/chat`)
-- Coordinating with a local Ollama model for text generation and embeddings
-- Retrieving relevant context from a Milvus vector store
+- Coordinating with a local Ollama model for text generation
 - Fetching and utilizing tools from a remote MCP server
 - Combining these components to produce informed, contextual responses
 - Providing health check endpoints for Kubernetes monitoring
@@ -44,12 +43,11 @@ orchestrator/
 
 - Implements `AutonomousStack` class using LangGraph for orchestration
 - Manages connections to:
-  - Milvus vector store for document retrieval (using Ollama nomic-embed-text embeddings)
   - Ollama for language generation (configurable model, default: gpt-oss:latest)
   - Remote MCP server for tool discovery and execution
 - Orchestrates an autonomous agent workflow:
   - Processes user messages with conversation history
-  - Uses LangGraph to dynamically choose between RAG, MCP tools, or direct LLM responses
+  - Uses LangGraph to dynamically choose MCP tools, or direct LLM responses
   - Includes a system prompt that specializes the assistant for UMass Lowell information
   - Refuses to answer academic work-related questions and states when it doesn't know answers
 
@@ -57,9 +55,8 @@ orchestrator/
 
 The service requires the following environment variables (typically set in `.env`):
 
-- `MCP_SERVER_BASE_URL`: URL for the remote MCP server (default: `http://localhost:8000/mcp`)
-- `MILVUS_BASE_URL`: URL for Milvus vector store (default: `http://localhost:19530`)
-- `MILVUS_COLLECTION`: Name of Milvus collection (default: `docs`)
+- `MCP_SERVER_1`: Comma separated configuration for a remote MCP server. Format is NAME,URL (ie: `uml-now-mcp,http://localhost:8000/mcp`)
+- `MCP_SERVER_2`: Comma separated configuration for a remote MCP server. Format is NAME,URL (ie: `uml-now-mcp,http://localhost:8001/mcp`)
 - `OLLAMA_MODEL`: Ollama model to use for chat (default: `gpt-oss:latest`)
 - `OLLAMA_BASE_URL`: Base URL for Ollama API (optional, defaults to localhost)
 
@@ -74,9 +71,10 @@ The service requires the following environment variables (typically set in `.env
    ```
 
 2. Ensure required services are running:
-   - Milvus vector store
    - Ollama with the specified model (default: gpt-oss:latest)
    - Remote MCP server
+    - uml-now-mcp
+    - uml-search-mcp
 
 3. Start the service:
 
