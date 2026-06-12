@@ -10,9 +10,8 @@ services:
     environment:
       # Match the environment variables to your custom stack initialization defaults
       - OLLAMA_HOST=http://192.168.1.207:11434
-      - MILVUS_BASE_URL=http://localhost:19530
-      - MCP_SERVER_BASE_URL=http://localhost:8000/mcp
-      - MILVUS_COLLECTION=docs
+      - MCP_SERVER_1=uml-now-mcp,http://localhost:8000/mcp
+      - MCP_SERVER_@=uml-search-mcp,http://localhost:8001/mcp
       - OLLAMA_MODEL=gemma4:12b
 
     # Restarts the container if a connection drops temporarily during boot sequences
