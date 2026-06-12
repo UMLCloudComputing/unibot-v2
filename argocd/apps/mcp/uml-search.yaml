@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: uml-search-mcp
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  project: unibot-v2
+  source:
+    repoURL: 'https://github.com/UMLCloudComputing/uml-search-mcp.git'
+    targetRevision: HEAD
+    path: k8s/
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: mcp
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace = true
+    automated:
+      prune: true
+      selfHeal: true
+
