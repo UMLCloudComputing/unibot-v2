@@ -39,8 +39,8 @@ There is currently only synchronous endpoint support.
 
 ### MCP Servers
 
-  [UML-NOW-MCP](https://github.com/UMLCloudComputing/uml-now-mcp)
-[UML-Search-MCP](https://github.com/UMLCloudComputing/uml-search-mcp)
+- [UML-NOW-MCP](https://github.com/UMLCloudComputing/uml-now-mcp)
+- [UML-Search-MCP](https://github.com/UMLCloudComputing/uml-search-mcp)
 
 ### Database Pipeline (DEPRECATED)
 
