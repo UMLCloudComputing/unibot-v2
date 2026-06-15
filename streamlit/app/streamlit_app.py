@@ -59,6 +59,21 @@ user_first_interaction = (
 )
 has_message_history = len(st.session_state.messages) > 0
 
+
+@st.dialog("Legal disclaimer")
+def show_disclaimer_dialog():
+    st.caption("""
+            This AI chatbot is powered by Gemma4 and public UMass Lowell 
+            information. Answers may be inaccurate, inefficient, or biased.
+            Any use or decisions based on such answers should include reasonable
+            practices including human oversight to ensure they are safe,
+            accurate, and suitable for your intended purpose. unibot-v2 is not
+            liable for any actions, losses, or damages resulting from the use
+            of the chatbot. Do not enter any private, sensitive, personal, or
+            regulated data.
+        """)
+
+
 # --- 4. CONDITIONAL UI: Empty Landing Page View ---
 if not user_first_interaction and not has_message_history:
     with st.container():
@@ -71,6 +86,12 @@ if not user_first_interaction and not has_message_history:
             options=SUGGESTIONS.keys(),
             key="selected_suggestion",
         )
+
+    st.button(
+        "&nbsp;:small[:gray[:material/balance: Legal disclaimer]]",
+        type="tertiary",
+        on_click=show_disclaimer_dialog,
+    )
 
     st.stop()  # Halt interface building until an action initiates an interaction state change
 
