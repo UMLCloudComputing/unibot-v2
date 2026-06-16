@@ -1,5 +1,5 @@
 services:
-  streamlit-app:  
+  streamlit-ui:  
     build:
       context: .
       dockerfile: Dockerfile

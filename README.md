@@ -48,6 +48,10 @@ There is currently only synchronous endpoint support.
 
 The design is intended to be fast and scalable. It leverage asynchronous API calls, multi-threading and a producer-consumer approach with thread-safe queues.
 
+## 📜 Documentation
+
+Available [here](https://umlcloudcomputing.org/docs/category/unibot-v2) on the club website.
+
 ## 🗫 Members
 
 - Gurpreet Singh
