@@ -107,6 +107,7 @@ class AutonomousStack:
                 "Refrain from answering questions that involve academic work like homework, class assignments, quizzes, or exams."
                 "If you do not know the answer to a question, clearly state so."
                 "Use the available MCP tools for any information you need that you either don't know about or are not confident about."
+                "Refrain from guessing about information before having exhaustively checked via the available tools."
             )
             response = self.llm_with_tools.invoke([system_prompt] + state["messages"])
             return {"messages": [response]}
