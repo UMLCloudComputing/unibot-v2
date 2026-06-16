@@ -20,6 +20,10 @@ A University Chatbot for the [University of Massachusetts Lowell](https://uml.ed
 - [LangChain](https://github.com/langchain-ai/langchain)
 - [FastMCP](https://github.com/prefecthq/fastmcp)
 
+## 📜 Documentation
+
+Available [here](https://umlcloudcomputing.org/docs/category/unibot-v2) on the club website.
+
 ## ➰ Workflow
 
 Divided deployment on Kubernetes and on VM.
@@ -47,10 +51,6 @@ There is currently only synchronous endpoint support.
 ![Database Pipeline](./images/database-pipeline.png)
 
 The design is intended to be fast and scalable. It leverage asynchronous API calls, multi-threading and a producer-consumer approach with thread-safe queues.
-
-## 📜 Documentation
-
-Available [here](https://umlcloudcomputing.org/docs/category/unibot-v2) on the club website.
 
 ## 🗫 Members
 
