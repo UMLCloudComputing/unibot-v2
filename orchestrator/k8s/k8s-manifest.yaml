@@ -13,10 +13,30 @@ metadata:
   labels:
     app: api-orchestrator
 data:
-  MCP_SERVER_1: uml-now-mcp,http://uml-now-mcp-svc.mcp.svc.cluster.local:8000/mcp
-  MCP_SERVER_2: uml-search-mcp,http://uml-search-mcp-svc.mcp.svc.cluster.local:8000/mcp
   OLLAMA_MODEL: gemma4:12b
   OLLAMA_BASE_URL: http://192.168.1.207:11434 
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-orchestrator-mcp-config
+  namespace: api-orchestrator
+  labels:
+    app: api-orchestrator
+data:
+  mcp_servers.json: |
+    {
+    "mcp_servers": [
+        {
+          "name": "uml-now-mcp",
+          "url": "http://uml-now-mcp-svc.mcp.svc.cluster.local:8000/mcp"
+        },
+        {
+          "name": "uml-search-mcp",
+          "url": "http://uml-search-mcp-svc.mcp.svc.cluster.local:8000/mcp"
+        }
+      ]
+    }
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -38,6 +58,9 @@ spec:
       containers:
         - name: orchestrator
           image: ghcr.io/umlcloudcomputing/unibot-v2-orchestrator:latest
+          volumeMounts:
+          - name: mcp-config-volume
+            mountPath: /app/config
           imagePullPolicy: Always
           ports:
           - containerPort: 8001
@@ -63,6 +86,10 @@ spec:
               port: 8001
             initialDelaySeconds: 5
             periodSeconds: 5
+      volumes:
+      - name: mcp-config-volume
+        configMap:
+          name: api-orchestrator-mcp-config
 ---
 apiVersion: v1
 kind: Service
