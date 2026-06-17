@@ -7,22 +7,14 @@ from typing import List, Optional
 from ai_stack import AutonomousStack, MCPServer
 from langchain_core.messages import HumanMessage, AIMessage
 
-MCP_SERVER_1 = os.getenv("MCP_SERVER_1", "http://localhost:8000/mcp")
-MCP_SERVER_2 = os.getenv("MCP_SERVER_2", "http://localhost:8001/mcp")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:latest")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL")
 
 app = FastAPI(title="unibot-v2 orchestrator (RAG + Remote MCP)")
 
-server_1 = MCP_SERVER_1.split(",")
-mcp_server_1: MCPServer = {"name": server_1[0], "url": server_1[1], "api_key": ""}
-
-server_2 = MCP_SERVER_2.split(",")
-mcp_server_2: MCPServer = {"name": server_2[0], "url": server_2[1], "api_key": ""}
 
 # Instantiate the refactored network configuration stack
 ai_coordinator = AutonomousStack(
-    mcp_servers=[mcp_server_1, mcp_server_2],
     ollama_base_url=OLLAMA_BASE_URL,
     ollama_model=OLLAMA_MODEL,
 )

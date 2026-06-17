@@ -1,4 +1,5 @@
 import logging
+import json
 from typing import List, Optional, Dict, Any, Annotated
 from typing_extensions import TypedDict
 from datetime import timedelta
@@ -40,14 +41,19 @@ class AutonomousStack:
         self,
         ollama_model: str,
         ollama_base_url: str,
-        mcp_servers: list[MCPServer],  # Point to your remote FastMCP servers
     ):
         logger.info(f"Initializing AutonomousStack with model: {ollama_model}")
         self.model_name = ollama_model
         self.ollama_base_url = ollama_base_url
 
         # 2. Setup mcp client credentials
-        self.mcp_servers = mcp_servers
+        try:
+            with (
+                open("/app/config/mcp_servers.json", "r") as f
+            ):  # MCP Servers config file must be mounted into the container at /app/config/...
+                self.mcp_servers = json.load(f)["mcp_servers"]
+        except Exception as e:
+            logging.error(f"Error parsing MCP Servers JSON config: {e}")
 
         self.graph = None
         self.mcp_client = None
