@@ -5,13 +5,13 @@ services:
       dockerfile: Dockerfile
     container_name: unibot-v2-orchestrator
     network_mode: "host"
+    volumes: 
+      - ./mcp_servers.json:/app/config/mcp_servers.json
     ports:
       - "8001:8001"
     environment:
       # Match the environment variables to your custom stack initialization defaults
       - OLLAMA_HOST=http://192.168.1.207:11434
-      - MCP_SERVER_1=uml-now-mcp,http://localhost:8000/mcp
-      - MCP_SERVER_2=uml-search-mcp,http://localhost:8002/mcp
       - OLLAMA_MODEL=gemma4:12b
 
     # Restarts the container if a connection drops temporarily during boot sequences

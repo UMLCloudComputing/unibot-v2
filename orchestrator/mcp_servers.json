@@ -1,0 +1,12 @@
+{
+  "mcp_servers": [
+    {
+      "name": "uml-now-mcp",
+      "url": "http://localhost:8000/mcp"
+    },
+    {
+      "name": "uml-search-mcp",
+      "url": "http://localhost:8002/mcp"
+    }
+  ]
+}
