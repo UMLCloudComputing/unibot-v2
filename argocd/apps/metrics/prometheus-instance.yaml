@@ -10,11 +10,11 @@ spec:
   replicas: 2
   serviceMonitorSelector:
     matchLabels:
-      release: prometheus-operator
+      release: prometheus-stack
 
   podMonitorSelector:
     matchLabels:
-      release: prometheus-operator
+      release: prometheus-stack
 
   retention: 10d
   resources:
