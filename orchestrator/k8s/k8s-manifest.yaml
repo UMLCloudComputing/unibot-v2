@@ -64,6 +64,7 @@ spec:
           imagePullPolicy: Always
           ports:
           - containerPort: 8001
+            name: http-metrics
           envFrom:
           - configMapRef:
               name: api-orchestrator-config 
@@ -103,6 +104,7 @@ spec:
     app: api-orchestrator
   ports:
     - protocol: TCP
+      name: http-metrics
       port: 8001
       targetPort: 8001
   type: ClusterIP

@@ -1,0 +1,20 @@
+# Prometheus ServiceMonitor to get application metrics
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: unibot-orchestrator-monitor
+  namespace: api-orchestrator
+  labels:
+    release: prometheus-operator
+spec:
+  namespaceSelector:
+    matchNames:
+      - api-orchestrator
+  selector:
+    matchLabels:
+      app: api-orchestrator
+  endpoints:
+    - port: http-metrics
+      path: /metrics
+      interval: 5s
+      scrapeTimeout: 4s
