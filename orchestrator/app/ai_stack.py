@@ -1,8 +1,12 @@
 import logging
 import json
+import time
 from typing import List, Optional, Dict, Any, Annotated
 from typing_extensions import TypedDict
 from datetime import timedelta
+
+# Prometheus
+from prometheus_client import Counter, Histogram
 
 # Core integrations
 from langchain_ollama import ChatOllama
@@ -13,11 +17,42 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 from langchain_core.tools import tool
+
+# LangChain Core
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage
+from langchain_core.callbacks import BaseCallbackHandler
 
 # Set up logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
+
+
+# Prometheus Metrics
+TOOLS_PER_QUERY_COUNT = Histogram(
+    "orchestrator_tools_per_query_total",
+    "The number of tools executed during a single LangGraph workflow execution loop",
+    ["query_type"],
+    buckets=(0, 1, 2, 3, 4, 10, float("inf")),
+)
+
+MCP_TOOL_EXECUTION_TOTAL = Counter(
+    "orchestrator_mcp_tool_executions_total",
+    "Total running count of individual CMP tool executions",
+    ["mcp_server", "tool_name"],
+)
+
+REQUEST_COUNT = Counter(
+    "orchestrator_requests_total",
+    "Total number of requests received by the orchestrator API",
+    ["endpoint", "status_code"],
+)
+
+GRAPH_COMPUTE_DURATION = Histogram(
+    "orchestrator_query_compute_seconds",
+    "Time spent computing a single query inside the LangGraph orchestrator",
+    ["query_type"],
+    buckets=(0.5, 1.0, 2.5, 5.0, 10.0, 30.0, 60.0, float("inf")),
+)
 
 
 # Agent State Schema
@@ -29,10 +64,71 @@ class AgentState(TypedDict):
     messages: Annotated[list, add_messages]
 
 
-class MCPServer(TypedDict):
-    name: str
-    url: str
-    api_key: Optional[str]
+# Prometheus Callback bridge
+class PrometheusMetricsCallback(BaseCallbackHandler):
+    def __init__(self, query_type: str, mcp_servers_config: list):
+        self.query_type = query_type
+        self.start_time = None
+        self.num_tools_invoked = 0
+        self.mcp_servers_config = mcp_servers_config
+
+    def _get_server_name_for_tool(self, tool_name: str) -> str:
+        """
+        Helper to map a tool name back t its parent MCP server name
+        """
+        for server in self.mcp_servers_config:
+            if tool_name.startswith(f"server['name']__"):
+                return server["name"]
+        return "unknown_mcp_server"
+
+    def on_chain_start(self, serialized: dict, inputs: dict, **kwargs) -> None:
+        """
+        Triggers when the compiled LangGraph starts executing
+        """
+        if self.start_time is None:
+            self.start_time = time.perf_counter()
+            self.num_tools_invoked = 0  # Reset
+
+    def on_tool_start(self, serialized: dict, input_str: str, **kwargs) -> None:
+        """
+        Run every single time the LLM decides to call an MCP tool
+        """
+        self.num_tools_invoked += 1
+
+        tool_name = serialized.get("name", "unknown_tool")
+        mcp_server = self._get_server_name_for_tool(tool_name)
+
+        MCP_TOOL_EXECUTION_TOTAL.labels(
+            mcp_server=mcp_server, tool_name=tool_name
+        ).inc()
+
+    def on_chain_end(self, outputs: dict, **kwargs) -> None:
+        """
+        Triggers when LangGraph reaches an END node successfully
+        """
+        if self.start_time:
+            duration = time.perf_counter() - self.start_time
+            GRAPH_COMPUTE_DURATION.labels(query_type=self.query_type).observe(duration)
+
+            TOOLS_PER_QUERY_COUNT.labels(query_type=self.query_type).observe(
+                self.num_tools_invoked
+            )
+
+            self.start_time = None
+
+    def on_chain_error(self, error: BaseException, **kwargs) -> None:
+        """
+        Triggers if the graph execution fails to crashes
+        """
+        if self.start_time:
+            duration = time.perf_counter() - self.start_time
+            GRAPH_COMPUTE_DURATION.labels(query_type=self.query_type).observe(duration)
+
+            TOOLS_PER_QUERY_COUNT.labels(query_type=self.query_type).observe(
+                self.num_tools_invoked
+            )
+
+            self.start_time = None
 
 
 # Autonomous Orchestrator Stack
@@ -149,7 +245,10 @@ class AutonomousStack:
         self.graph = graph.compile()
 
     async def chat(
-        self, user_message: str, chat_history: List[BaseMessage] | None = None
+        self,
+        user_message: str,
+        chat_history: List[BaseMessage] | None = None,
+        query_type: str = "general",  # Optional label for metric slicing
     ) -> str:
         """
         Executes the autonomous graph workflow asynchronously
@@ -167,5 +266,11 @@ class AutonomousStack:
         }
         logger.info("Processing chat request")
 
-        final_state = await self.graph.ainvoke(initial_state)
+        metrics_callback = PrometheusMetricsCallback(
+            query_type=query_type, mcp_servers_config=self.mcp_servers
+        )
+
+        config = {"callbacks": [metrics_callback]}
+
+        final_state = await self.graph.ainvoke(initial_state, config=config)
         return final_state["messages"][-1]

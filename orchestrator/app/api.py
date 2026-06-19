@@ -1,16 +1,22 @@
 import os
 import logging
-from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 
-from ai_stack import AutonomousStack, MCPServer
+# Prometheus
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+
+# FastAPI
+from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi.responses import PlainTextResponse
+
+from ai_stack import AutonomousStack, REQUEST_COUNT
 from langchain_core.messages import HumanMessage, AIMessage
 
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:latest")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL")
 
-app = FastAPI(title="unibot-v2 orchestrator (RAG + Remote MCP)")
+app = FastAPI(title="unibot-v2 orchestrator")
 
 
 # Instantiate the refactored network configuration stack
@@ -30,6 +36,26 @@ class ChatRequest(BaseModel):
     message: str  # New incoming user query
     # Optional hsitory tracking
     history: Optional[List[ChatMessageSchema]] = []
+
+
+@app.middleware("http")
+async def monitor_requests(request: Request, call_next):
+    endpoint = request.url.path
+
+    # Do not track Prometheus scraping activity
+    if endpoint == "/metrics":
+        return await call_next(request)
+
+    try:
+        response = await call_next(request)
+        status_code = response.status_code
+        return response
+    except Exception as e:
+        status_code = 500
+        raise e
+    finally:
+        # Increment total counter dynamically per endpoint and HTTP status
+        REQUEST_COUNT.labels(endpoint=endpoint, status_code=status_code).inc()
 
 
 @app.post("/v1/chat")
@@ -65,6 +91,14 @@ async def health_check():
         return {"status": "healthy"}
     except Exception as e:
         return {"status": "unhealthy", "reason": str(e)}
+
+
+@app.get("/metrics", response_class=PlainTextResponse)
+async def metrics():
+    """
+    Exposes all internal metrics to Prometheus scraping agents
+    """
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 if __name__ == "__main__":
