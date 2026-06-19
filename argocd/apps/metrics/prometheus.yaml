@@ -1,3 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prometheus-operator
+  annotations:
+    pod-security.kubernetes.io/enforce: privileged
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -24,5 +31,3 @@ spec:
     automated: 
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
