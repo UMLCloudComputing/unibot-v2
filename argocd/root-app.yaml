@@ -18,7 +18,7 @@ spec:
         - 'registry-1.docker.io/bitnamicharts'
         - 'docker.io/envoyproxy'
         - 'ghcr.io/UMLCloudComputing'
-        - 'prom/prometheus'
+        - 'https://prometheus-community.github.io/helm-charts'
     destinations:
         - namespace: 'milvus-cluster'
           server: 'https://kubernetes.default.svc'
