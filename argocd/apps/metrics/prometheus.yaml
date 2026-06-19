@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus-operator
+  namespace: argocd
+spec:
+  project: unibot-v2
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 86.2.3
+    helm:
+      values: |
+        grafana: 
+          enabled: false
+        alertManager:
+          enabled: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prometheus-operator 
+  syncPolicy:
+    automated: 
+      prune: true
+      selfHeal: true
+    CreateNamespace: true

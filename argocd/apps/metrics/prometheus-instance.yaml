@@ -1,0 +1,38 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: unibot-prometheus
+  namespace: monitoring
+  labels:
+    prometheus: unibot-prometheus
+spec:
+  serviceAccountName: prometheus-k8s
+  replicas: 2
+  serviceMonitorSelector:
+    matchLabels:
+      release: prometheus-operator
+
+  podMonitorSelector:
+    matchLabels:
+      release: prometheus-operator
+
+  retention: 10d
+  resources:
+    requests:
+      memory: 400Mi
+    limits:
+      memory: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-unibot-svc
+  namespace: monitoring
+spec:
+  type: ClusterIP
+  ports:
+    - name: web
+      port: 9090
+      targetPort: 9090
+  selector:
+    prometheus: unibot-prometheus
