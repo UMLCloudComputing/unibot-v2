@@ -24,6 +24,8 @@ spec:
           enabled: true
         alertManager:
           enabled: true
+        nodeExporter:
+          enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: prometheus-stack
