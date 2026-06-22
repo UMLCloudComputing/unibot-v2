@@ -13,16 +13,16 @@ from fastapi.responses import PlainTextResponse
 from ai_stack import AutonomousStack, REQUEST_COUNT
 from langchain_core.messages import HumanMessage, AIMessage
 
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:latest")
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL")
+MODEL_NAME = os.getenv("MODEL_NAME", "gemma4:12b")
+MODEL_ENDPOINT_BASE_URL = os.getenv("MODEL_ENDPOINT_BASE_URL")
 
 app = FastAPI(title="unibot-v2 orchestrator")
 
 
 # Instantiate the refactored network configuration stack
 ai_coordinator = AutonomousStack(
-    ollama_base_url=OLLAMA_BASE_URL,
-    ollama_model=OLLAMA_MODEL,
+    model_endpoint_base_url=MODEL_ENDPOINT_BASE_URL,
+    model_name=MODEL_NAME,
 )
 
 

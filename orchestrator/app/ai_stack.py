@@ -9,7 +9,7 @@ from datetime import timedelta
 from prometheus_client import Counter, Histogram
 
 # Core integrations
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
 # LangGraph Core
@@ -135,12 +135,12 @@ class PrometheusMetricsCallback(BaseCallbackHandler):
 class AutonomousStack:
     def __init__(
         self,
-        ollama_model: str,
-        ollama_base_url: str,
+        model_name: str,
+        model_endpoint_base_url: str,
     ):
-        logger.info(f"Initializing AutonomousStack with model: {ollama_model}")
-        self.model_name = ollama_model
-        self.ollama_base_url = ollama_base_url
+        logger.info(f"Initializing AutonomousStack with model: {model_name}")
+        self.model_name = model_name
+        self.model_endpoint_base_url = model_endpoint_base_url
 
         # 2. Setup mcp client credentials
         try:
@@ -187,9 +187,9 @@ class AutonomousStack:
         all_tools = await self.mcp_client.get_tools()
 
         # 2. Instantiate the model and bind all tools
-        llm = ChatOllama(
+        llm = ChatOpenAI(
             model=self.model_name,
-            base_url=self.ollama_base_url,
+            base_url=self.model_endpoint_base_url,
             temperature=1.0,
             top_p=0.95,
             top_k=64,
