@@ -9,7 +9,7 @@ from datetime import timedelta
 from prometheus_client import Counter, Histogram
 
 # Core integrations
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOllama
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
 # LangGraph Core
@@ -187,7 +187,7 @@ class AutonomousStack:
         all_tools = await self.mcp_client.get_tools()
 
         # 2. Instantiate the model and bind all tools
-        llm = ChatOpenAI(
+        llm = ChatOllama(
             model=self.model_name,
             base_url=self.model_endpoint_base_url,
             temperature=1.0,

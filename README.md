@@ -51,8 +51,3 @@ There is currently only synchronous endpoint support.
 ![Database Pipeline](./images/database-pipeline.png)
 
 The design is intended to be fast and scalable. It leverage asynchronous API calls, multi-threading and a producer-consumer approach with thread-safe queues.
-
-## 🗫 Members
-
-- Gurpreet Singh
-- Nick Bottari

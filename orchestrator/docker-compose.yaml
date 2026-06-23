@@ -9,8 +9,8 @@ services:
       - ./mcp_servers.json:/app/config/mcp_servers.json
     environment:
       # Match the environment variables to your custom stack initialization defaults
-      - OLLAMA_HOST=http://192.168.1.207:11434
-      - OLLAMA_MODEL=gemma4:12b
+      - MODEL_ENDPOINT_BASE_URL=http://192.168.1.207:11434/v1
+      - MODEL_NAME=gemma4:12b
 
     # Restarts the container if a connection drops temporarily during boot sequences
     restart: on-failure
