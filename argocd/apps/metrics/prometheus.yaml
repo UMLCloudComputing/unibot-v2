@@ -26,6 +26,8 @@ spec:
           enabled: true
         nodeExporter:
           enabled: false
+        prometheus:
+          enabled: false # Disable default global prometheus in favor for seperate one in monitoring namespace
   destination:
     server: https://kubernetes.default.svc
     namespace: prometheus-stack

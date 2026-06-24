@@ -37,7 +37,7 @@ TOOLS_PER_QUERY_COUNT = Histogram(
 
 MCP_TOOL_EXECUTION_TOTAL = Counter(
     "orchestrator_mcp_tool_executions_total",
-    "Total running count of individual CMP tool executions",
+    "Total running count of individual MCP tool executions",
     ["mcp_server", "tool_name"],
 )
 
