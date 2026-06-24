@@ -19,6 +19,8 @@ A University Chatbot for the [University of Massachusetts Lowell](https://uml.ed
 - [LangGraph](https://github.com/langchain-ai/langgraph)
 - [LangChain](https://github.com/langchain-ai/langchain)
 - [FastMCP](https://github.com/prefecthq/fastmcp)
+- [Grafana](https://github.com/grafana/grafana)
+- [Prometheus](https://github.com/prometheus/prometheus)
 
 ## 📜 Documentation
 
