@@ -12,6 +12,7 @@ metadata:
     prometheus: unibot-prometheus
 spec:
   replicas: 2
+  serviceAccountName: orchestrator-sa
   serviceMonitorSelector:
     matchLabels:
       app: api-orchestrator
@@ -21,8 +22,8 @@ spec:
       app: api-orchestrator
 
   serviceMonitorNamespaceSelector:
-    matchLabels:
-      app: api-orchestrator
+    matchNames:
+      - api-orchestrator
 
   retention: 10d
   resources:
@@ -44,3 +45,6 @@ spec:
       targetPort: 9090
   selector:
     prometheus: unibot-prometheus
+---
+apiVerison: v1
+kind: ServiceAccount
