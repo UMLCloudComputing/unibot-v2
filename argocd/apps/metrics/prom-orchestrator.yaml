@@ -45,6 +45,3 @@ spec:
       targetPort: 9090
   selector:
     prometheus: unibot-prometheus
----
-apiVerison: v1
-kind: ServiceAccount
