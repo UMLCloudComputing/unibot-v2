@@ -5,7 +5,7 @@ metadata:
   name: unibot-orchestrator-monitor
   namespace: api-orchestrator
   labels:
-    release: prometheus-operator
+    app: api-orchestrator
 spec:
   namespaceSelector:
     matchNames:

@@ -14,11 +14,15 @@ spec:
   replicas: 2
   serviceMonitorSelector:
     matchLabels:
-      release: prometheus-stack
+      app: api-orchestrator
 
   podMonitorSelector:
     matchLabels:
-      release: prometheus-stack
+      app: api-orchestrator
+
+  serviceMonitorNamespaceSelector:
+    matchLabels:
+      app: api-orchestrator
 
   retention: 10d
   resources:
