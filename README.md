@@ -7,6 +7,8 @@
 
 A University Chatbot for the [University of Massachusetts Lowell](https://uml.edu) that can answer a variety of questions about the university. <br/>
 
+100% On-Prem.
+
 ## 👨‍💻 Technologies
 
 - [GitHub Actions](https://docs.github.com/en/actions) CI
