@@ -16,11 +16,6 @@ spec:
             type: Prometheus
             url: http://prometheus-unibot-svc.monitoring.svc.cluster.local:9090
             isDefault: true
-        dashboards:
-          default:
-            api-orchestrator-dashboard:
-              url: https://github.com/UMLCloudComputing/unibot-v2/grafana-dashboard/api-orchestrator.json
-
   destination: 
     server: https://kubernetes.default.svc
     namespace: monitoring
