@@ -1,0 +1,32 @@
+apiVerison: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: unibot-v2
+  source:
+    repoURL: https://grafana-community.github.io/helm-charts
+    chart: grafana
+    targetRevision: 10.5.15
+    helm:
+      values: |
+        datasources:
+          - name: api-orchestrator
+            type: Prometheus
+            url: http://prometheus-unibot-svc.monitoring.svc.cluster.local:9090
+            isDefault: true
+        dashboards:
+          default:
+            api-orchestrator-dashboard:
+              url: https://github.com/UMLCloudComputing/unibot-v2/grafana-dashboard/api-orchestrator.json
+
+  destination: 
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+    syncPolicy:
+      automated:
+        prune: true
+        selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
