@@ -7,21 +7,25 @@ spec:
   project: unibot-v2
   source:
     repoURL: https://grafana-community.github.io/helm-charts
-    chart: grafana-community/grafana
+    chart: grafana
     targetRevision: 12.7.1
     helm:
       values: |
-        datasources:
-          - name: api-orchestrator
+        additionalDataSources:
+          - name: Prometheus
             type: Prometheus
+            access: proxy
             url: http://prometheus-unibot-svc.monitoring.svc.cluster.local:9090
+            jsonData:
+              httpMethod: POST
+              manageAlerts: true
             isDefault: true
   destination: 
     server: https://kubernetes.default.svc
     namespace: monitoring
-    syncPolicy:
-      automated:
-        prune: true
-        selfHeal: true
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
