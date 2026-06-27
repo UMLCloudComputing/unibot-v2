@@ -19,6 +19,8 @@ spec:
           enabled: false
         nodeExporter: 
           enabled: false
+        alertManager:
+          enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
