@@ -23,6 +23,12 @@ spec:
           enabled: false
         prometheus:
           enabled: false
+        kubernetesServiceMonitors:
+          enabled: false
+        prometheus-operator:
+          enabled: true
+          admissionWebhooks:
+            enabled: true
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
