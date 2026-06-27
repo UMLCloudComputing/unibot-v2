@@ -21,6 +21,8 @@ spec:
           enabled: false
         alertmanager:
           enabled: false
+        prometheus:
+          enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
