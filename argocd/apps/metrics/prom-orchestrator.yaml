@@ -1,3 +1,49 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: prometheus-k8s-scraper
+  namespace: api-orchestrator  
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/metrics
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources:
+  - daemonsets
+  - deployments
+  - replicasets
+  - statefulsets
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["networking.k8s.io"]
+  resources:
+  - ingresses
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prometheus-k8s-scraper-binding
+  namespace: api-orchestrator  # Must match the Role namespace
+subjects:
+- kind: ServiceAccount
+  name: orchestrator-sa
+  namespace: monitoring
+roleRef:
+  kind: Role
+  name: prometheus-k8s-scraper
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: orchestrator-sa
+  namespace: monitoring
+---
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
