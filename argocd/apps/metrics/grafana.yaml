@@ -20,6 +20,9 @@ spec:
               httpMethod: POST
               manageAlerts: true
             isDefault: true
+        persistence:
+          type: pvc
+          enabled: true
   destination: 
     server: https://kubernetes.default.svc
     namespace: monitoring
