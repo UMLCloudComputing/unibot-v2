@@ -9,7 +9,7 @@ from datetime import timedelta
 from prometheus_client import Counter, Histogram
 
 # Core integrations
-from langchain_openai import ChatOllama
+from langchain_ollama import ChatOllama
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
 # LangGraph Core
