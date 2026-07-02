@@ -171,7 +171,7 @@ class AutonomousStack:
                 server["name"]: {
                     "url": server["url"],
                     "transport": "streamable_http",
-                    "timeout": timedelta(seconds=120),
+                    "timeout": None,
                     "sse_read_timeout": timedelta(seconds=600),
                     **(
                         {"headers": {"Authorization": f"Bearer {server['api_key']}"}}
