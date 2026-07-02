@@ -12,14 +12,22 @@ spec:
     helm:
       values: |
         additionalDataSources:
-          - name: Prometheus
+          - name: Orchestrator
             type: Prometheus
             access: proxy
-            url: http://prometheus-unibot-svc.monitoring.svc.cluster.local:9090
+            url: http://prometheus-orchestrator-svc.monitoring.svc.cluster.local:9090
             jsonData:
               httpMethod: POST
               manageAlerts: true
-            isDefault: true
+
+          - name: MCP
+            type: Prometheus
+            access: proxy
+            url: http://prometheus-mcp-svc.monitoring.svc.cluster.local:9090
+            jsonData:
+              httpMethod: POST
+              manageAlerts: true
+
         persistence:
           type: pvc
           enabled: true

@@ -1,8 +1,8 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: prometheus-orchestrator-scraper
-  namespace: api-orchestrator  
+  name: prometheus-mcp-scraper
+  namespace: mcp  
 rules:
 - apiGroups: [""]
   resources:
@@ -27,45 +27,45 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: prometheus-orchestrator-scraper-binding
-  namespace: api-orchestrator  # Must match the Role namespace
+  name: prometheus-mcp-scraper-binding
+  namespace: mcp  # Must match the Role namespace
 subjects:
 - kind: ServiceAccount
-  name: orchestrator-sa
-  namespace: monitoring
+  name: mcp-sa
+  namespace: monitoring 
 roleRef:
   kind: Role
-  name: prometheus-orchestrator-scraper
+  name: prometheus-mcp-scraper
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: orchestrator-sa
+  name: mcp-sa
   namespace: monitoring
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
-  name: unibot-prometheus-orchestrator
+  name: unibot-prometheus-mcp
   namespace: monitoring
   labels:
-    prometheus: unibot-prometheus-orchestrator
+    prometheus: unibot-prometheus-mcp
 spec:
   replicas: 2
-  serviceAccountName: orchestrator-sa
+  serviceAccountName: mcp-sa
 
   serviceMonitorSelector:
     matchLabels:
-      app: api-orchestrator
+      app: mcp 
 
   podMonitorSelector:
     matchLabels:
-      app: api-orchestrator
+      app: mcp
 
   serviceMonitorNamespaceSelector:
     matchNames:
-      - api-orchestrator
+      - mcp
 
   retention: 10d
   resources:
@@ -77,7 +77,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-orchestrator-svc
+  name: prometheus-mcp-svc
   namespace: monitoring
 spec:
   type: ClusterIP
@@ -86,4 +86,4 @@ spec:
       port: 9090
       targetPort: 9090
   selector:
-    prometheus: unibot-prometheus-orchestrator
+    prometheus: unibot-prometheus-mcp
