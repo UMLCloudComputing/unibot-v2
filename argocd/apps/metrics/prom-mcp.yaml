@@ -55,18 +55,11 @@ spec:
   replicas: 2
   serviceAccountName: mcp-sa
 
-  serviceMonitorSelector:
-    matchLabels:
-      app: 
-        - uml-search-mcp 
-        - uml-now-mcp
+  # Match all 
+  serviceMonitorSelector: {}
+  podMonitorSelector: {}
 
-  podMonitorSelector:
-    matchLabels:
-      app: 
-        - uml-search-mcp
-        - uml-now-mcp
-
+  # In mcp ns
   serviceMonitorNamespaceSelector:
     matchNames:
       - mcp
