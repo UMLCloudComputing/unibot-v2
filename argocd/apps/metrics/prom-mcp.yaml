@@ -57,11 +57,15 @@ spec:
 
   serviceMonitorSelector:
     matchLabels:
-      app: mcp 
+      app: 
+        - uml-search-mcp 
+        - uml-now-mcp
 
   podMonitorSelector:
     matchLabels:
-      app: mcp
+      app: 
+        - uml-search-mcp
+        - uml-now-mcp
 
   serviceMonitorNamespaceSelector:
     matchNames:
