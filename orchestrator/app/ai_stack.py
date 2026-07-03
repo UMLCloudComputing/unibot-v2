@@ -16,7 +16,6 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
-from langchain_core.tools import tool
 
 # LangChain Core
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage
