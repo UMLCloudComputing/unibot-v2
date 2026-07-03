@@ -23,7 +23,7 @@ from langchain_core.callbacks import BaseCallbackHandler
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 # Prometheus Metrics
@@ -164,7 +164,7 @@ class AutonomousStack:
             return
 
         # 1. Setup MCP client
-        logger.debug("Setting up MCP client for server(s)")
+        logger.info("Setting up MCP client for server(s)")
         self.mcp_client = MultiServerMCPClient(
             {
                 server["name"]: {
@@ -181,7 +181,7 @@ class AutonomousStack:
                 for server in self.mcp_servers
             }
         )
-        logger.debug("Obtaining tools from MCP server...")
+        logger.info("Obtaining tools from MCP server...")
         # 1. Pull the remote MCP tools
         all_tools = await self.mcp_client.get_tools()
 
