@@ -1,155 +1,167 @@
-# Streamlit RAG Application
+# unibot-v2 Streamlit Client
 
-A Streamlit-based client application that connects to an existing MCP server for Retrieval-Augmented Generation (RAG) functionality. This application provides a user-friendly interface for querying a knowledge base powered by Milvus vector database.
+A Streamlit-based chat interface for the unibot-v2 unified orchestrator API gateway, featuring conversation history management and an optimized landing page UX.
 
 ## Features
 
-- Clean, intuitive chat interface for querying the knowledge base
-- Real-time health checking of the MCP server connection
-- Configurable connection settings via sidebar
-- Display of search results with source attribution
-- Responsive design suitable for both desktop and tablet use
-- Built with uv package manager for fast, reliable dependency management
+### Conversation History
+- **Persistent Conversations**: All conversations are stored in browser session state using `st.session_state`
+- **Conversation Selector**: Dropdown menu in the top-left header to switch between conversations
+- **New Conversation Button**: "+ New Conversation" button to start fresh chats
+- **Auto-generated Titles**: Conversations automatically get titles from the first user message
+- **Message History**: Full conversation history persists within the browser session
+
+### Landing Page
+- Clean, focused initial view with suggested topic pills
+- Centered chat input for first-time interactions
+- Legal disclaimer accessible via button
+- Automatic transition to chat view after first interaction
+
+### Chat Interface
+- Standard conversational layout with user/assistant message bubbles
+- Streaming-style responses with "Working..." spinner
+- Follow-up questions supported via persistent chat input
 
 ## Architecture
 
 This application follows the client-server model:
+
 - **Streamlit App**: Acts as the client UI
-- **MCP Server**: Provides the RAG functionality (already deployed in the system)
-- **Milvus Database**: Stores the vectorized knowledge base
-- **Ollama**: Provides embedding model for query vectorization
+- **Orchestrator API Gateway**: Provides the unibot-v2 backend functionality (LangGraph/LangChain agent)
+- **Session State**: Manages conversation history in-browser using `st.session_state`
 
 ## Local Development
 
 ### Prerequisites
-
-- Python 3.11+
-- [uv](https://github.com/astral-sh/uv) (Astral's Python package installer)
-- Running MCP server (accessible via network)
+- Python 3.9+
+- Access to unibot-v2 orchestrator API (default: `http://localhost:8001/v1/chat`)
 
 ### Installation
 
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd streamlit-app
+   cd unibot-v2/streamlit
    ```
 
-2. Install dependencies using uv:
+2. Create virtual environment (optional but recommended):
    ```bash
-   uv sync
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
    ```
 
-3. Run the application:
+3. Install dependencies:
    ```bash
-   uv run streamlit run streamlit_app.py
+   pip install -e .
    ```
-
-4. Access the application at `http://localhost:8501`
 
 ### Configuration
 
-The application can be configured via:
-- Environment variables:
-  - `MCP_SERVER_URL`: URL of the MCP server (default: `http://localhost:8000`)
-  - `COLLECTION_NAME`: Milvus collection name (default: `docs`)
-  - `TOP_K`: Number of search results to return (default: `5`)
+Set the orchestrator API URL via environment variable:
+```bash
+export ORCHESTRATOR_API_URL="http://your-orchestrator-url/v1/chat"
+```
+Or create a `.env` file:
+```
+ORCHESTRATOR_API_URL=http://localhost:8001/v1/chat
+```
 
-- Sidebar in the Streamlit UI for runtime configuration changes
+### Running the Application
+
+```bash
+streamlit run app/streamlit_app.py
+```
+
+The application will be available at `http://localhost:8501`
+
+## Usage
+
+### Starting a Conversation
+1. On first visit, you'll see the landing page with suggested topics
+2. Either:
+   - Type a question in the chat input and press Enter
+   - Click one of the suggested topic pills
+3. After your first interaction, the landing page transitions to the chat view
+
+### Managing Conversations
+- **Switch Conversations**: Use the dropdown in the top-left header
+- **New Conversation**: Click the "+ New Conversation" button in the header
+- **View History**: All messages in the selected conversation are displayed in the chat area
+
+### Continuing a Conversation
+- Type follow-up questions in the chat input at the bottom
+- The assistant responds with context from the full conversation history
+- Conversation title updates automatically after your first message
+
+## How It Works
+
+### Conversation Management
+1. On initial load, the app creates an empty conversation
+2. The header contains:
+   - **Conversation Selector**: Dropdown showing all conversations by title
+   - **+ New Conversation**: Button to create a blank conversation
+3. Selecting a different conversation from the dropdown instantly loads its message history
+4. Starting a new conversation clears landing page states and begins fresh
+
+### Title Generation
+- New conversations start with title "New conversation"
+- After the first user message, the title automatically updates to that message (truncated to 30 characters with ellipsis if longer)
+
+### Session Storage
+- All conversation data is stored in `st.session_state`:
+  - `conversations`: List of conversation objects (`{id, title, messages}`)
+  - `current_conversation_id`: ID of the actively viewed conversation
+  - `messages`: Reference to the current conversation's messages (for compatibility)
+- Data persists for the browser session duration (until tab is closed/refreshed)
+
+### API Integration
+- Sends requests to the orchestrator API at `ORCHESTRATOR_API_URL`
+- Payload includes current message and conversation history
+- Handles timeouts up to 240 seconds for deep agentic processing
+- Displays errors for API failures or network issues
+
+## File Structure
+```
+streamlit/
+├── app/
+│   ├── streamlit_app.py      # Main Streamlit application
+│   └── .streamlit/           # Streamlit configuration
+├── Dockerfile                # Containerization
+├── docker-compose.yaml       # Deployment configuration
+├── k8s/                      # Kubernetes manifests
+└── README.md                 # This file
+```
+
+## Customization
+
+### Modifying Suggested Topics
+Edit the `SUGGESTIONS` dictionary in `streamlit_app.py`:
+```python
+SUGGESTIONS = {
+    ":blue[:material/school:] Tell me about UMass Lowell": (
+        "What is UMass Lowell, what is its campus culture like, and what are its signature programs?"
+    ),
+    // Add more suggestions as needed
+}
+```
+
+### Changing Appearance
+- Page config is set via `st.set_page_config()` at the top of the file
+- Logo image URL can be modified in the `st.image()` call
+- Colors and layout follow Streamlit's default theming
 
 ## Deployment
 
 ### Docker
-
-Build and run the Docker container:
-
 ```bash
-# Build the image
-docker build -t streamlit-rag:latest .
-
-# Run the container
-docker run -p 8501:8501 \
-  -e MCP_SERVER_URL="http://your-mcp-server:8000" \
-  -e COLLECTION_NAME="docs" \
-  -e TOP_K="5" \
-  streamlit-rag:latest
+docker build -t unibot-v2-streamlit .
+docker run -p 8501:8501 -e ORCHESTRATOR_API_URL="http://host.docker.internal:8001/v1/chat" unibot-v2-streamlit
 ```
 
 ### Kubernetes
+See the `k8s/` directory for deployment manifests.
 
-The application includes Kubernetes manifests for deployment:
-
-```bash
-# Apply the deployment
-kubectl apply -f kubernetes-deployment.yaml
-```
-
-#### Required Secrets
-
-Create a secret named `streamlit-rag-secrets` with the following keys:
-- `mcp-server-url`: Base64 encoded URL of the MCP server
-- `collection-name`: Base64 encoded Milvus collection name (optional)
-- `top-k`: Base64 encoded number of results (optional)
-
-Example:
-```bash
-kubectl create secret generic streamlit-rag-secrets \
-  --from-literal=mcp-server-url="http://mcp-service.mcp.svc.cluster.local:8000" \
-  --from-literal=collection-name="docs" \
-  --from-literal=top-k="5"
-```
-
-### ArgoCD Integration
-
-The application is configured for deployment via ArgoCD:
-
-1. The ArgoCD application manifest is located at `argocd/apps/streamlit-rag.yaml`
-2. It pulls from the `streamlit-app` directory in this repository
-3. Deploys to the `streamlit-rag` namespace
-4. Automatically syncs and self-heals
-
-## Usage
-
-1. Ensure the MCP server is running and accessible
-2. Optionally configure the MCP server URL in the sidebar
-3. Click "Check MCP Health" to verify connectivity
-4. Enter your question in the chat input
-5. View the results displayed below the chat
-6. Use the sidebar to adjust search settings or clear chat history
-
-## MCP Server Communication
-
-This application communicates with the MCP server using the standard MCP over HTTP protocol:
-- Calls the `search_umass_lowell_knowledge_base` tool
-- Sends JSON-RPC 2.0 formatted requests
-- Expects results in the format: `[{"text": "...", "source_url": "..."}, ...]`
-
-## Troubleshooting
-
-### Connection Issues
-- Verify the MCP server is running and accessible from the Streamlit pod/container
-- Check the health endpoint: `http://mcp-server-url/health`
-- Ensure network policies allow traffic between Streamlit and MCP server
-
-### No Results
-- Verify the Milvus collection has data
-- Check that the embedding model is working correctly
-- Ensure the MCP server can successfully query the vector database
-
-### Performance
-- Adjust replica count in the deployment based on expected load
-- Monitor resource usage and adjust requests/limits accordingly
-- Consider enabling caching if queries are repetitive
-
-## Security Considerations
-
-- The application does not authenticate users by design - consider deploying behind an auth proxy
-- Secrets are managed via Kubernetes Secrets
-- All communication with the MCP server is over HTTP (consider TLS for production)
-- Input is sanitized by Streamlit's markdown rendering
-
-## Maintenance
-
-- Regularly update dependencies: `uv lock --upgrade && uv sync`
-- Monitor logs for errors in both Streamlit and MCP server components
-- Keep the base container image updated for security patches
+## Notes
+- Conversation history is stored only in browser memory (session state)
+- Refreshing the browser tab will clear all conversations
+- For persistent storage across sessions, a backend implementation would be required

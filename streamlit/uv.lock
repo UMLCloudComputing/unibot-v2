@@ -1413,6 +1413,18 @@ wheels = [
 ]
 
 [[package]]
+name = "streamlit-local-storage"
+version = "0.0.25"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "streamlit" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d1/ad/5e92a9355c2f32c162f0e2a2262b90697385edf0fe64bc66a27eb652ac95/streamlit_local_storage-0.0.25.tar.gz", hash = "sha256:9b7c3e8ae7c14a68b47c980b167306181292213736dfa71850c8d3204dc2a9cd", size = 538392, upload-time = "2024-11-18T16:22:09.432Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/a6/502b00b6db10c3d467ec57d822d6647a35f0328ef03668aa5b6dd160f966/streamlit_local_storage-0.0.25-py3-none-any.whl", hash = "sha256:0ef85618ed8c44f347b7acffb2d104da5b6915e6a4e24612f12a4d2cc355b951", size = 543746, upload-time = "2024-11-18T16:22:07.305Z" },
+]
+
+[[package]]
 name = "streamlit-ui"
 version = "0.1.0"
 source = { virtual = "." }
@@ -1420,6 +1432,7 @@ dependencies = [
     { name = "fastmcp" },
     { name = "httpx" },
     { name = "streamlit" },
+    { name = "streamlit-local-storage" },
 ]
 
 [package.optional-dependencies]
@@ -1435,6 +1448,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.24.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0.0" },
     { name = "streamlit", specifier = ">=1.28.0" },
+    { name = "streamlit-local-storage", specifier = ">=0.0.25" },
 ]
 provides-extras = ["dev"]
 
