@@ -7,6 +7,10 @@ Connects to a unified orchestrator API gateway with an optimized landing page UX
 import streamlit as st
 import httpx
 import os
+import uuid
+import datetime
+
+from streamlit_local_storage import LocalStorage
 
 # --- 1. Configurations & Constants ---
 ORCHESTRATOR_API_URL = os.getenv(
@@ -21,7 +25,7 @@ st.set_page_config(
 
 st.image(
     "https://raw.githubusercontent.com/UMLCloudComputing/unibot-v2/refs/heads/main/images/unibot-v2-logo-light-text.png",
-    use_container_width=True,
+    width="stretch",
 )
 
 # Suggested prompt values mapped: "Display Label": "Actual Prompt Sent to LLM"
@@ -41,10 +45,80 @@ SUGGESTIONS = {
 }
 
 # --- 2. Initialize Session Tracking ---
-if "messages" not in st.session_state:
+local_storage = LocalStorage()
+saved_chats = local_storage.getItem("unibot_conversations") or {}
+
+if "all_chats" not in st.session_state:
+    st.session_state.all_chats = saved_chats
+
+if "active_chat_id" not in st.session_state:
+    if st.session_state.all_chats:
+        # Default to the most recently active chat
+        st.session_state.active_chat_id = max(
+            st.session_state.all_chats.keys(),
+            key=lambda k: st.session_state.all_chats[k]["updated_at"],
+        )
+    else:
+        st.session_state.active_chat_id = None
+
+
+def persist_to_browser():
+    local_storage.setItem("unibot_conversations", st.session_state.all_chats)
+
+
+# Bind current active conv messages list to Streamlit's strcutural execution ref
+if (
+    st.session_state.active_chat_id
+    and st.session_state.active_chat_id in st.session_state.all_chats
+):
+    st.session_state.messages = st.session_state.all_chats[
+        st.session_state.active_chat_id
+    ]["messages"]
+else:
     st.session_state.messages = []
 
-# --- 3. Persistent Header with Structural Action Row ---
+# --- 3. SIDEBAR: Conversation manager ---
+with st.sidebar:
+    st.header("Conversations")
+    if st.button("New Chat", use_container_width=True):
+        new_id = str(uuid.uuid4())
+        st.session_state.all_chats[new_id] = {
+            "title": "New Conversation",
+            "messages": [],
+            "updated_at": datetime.datetime.now().isoformat(),
+        }
+        st.session_state.active_chat_id = new_id
+        st.session_state.initial_question = None
+        st.session_state.selected_suggestion = None
+        persist_to_browser()
+        st.rerun()
+
+    st.write("---")
+    if st.session_state.all_chats:
+        # Show newest conv first
+        sorted_keys = sorted(
+            st.session_state.all_chats.keys(),
+            key=lambda k: st.session_state.all_chats[k]["updated_at"],
+            reverse=True,
+        )
+        for chat_id in sorted_keys:
+            title = st.session_state.all_chats[chat_id]["title"]
+            is_active = chat_id == st.session_state.active_chat_id
+
+            if st.button(
+                f"{'💬' if is_active else '📄'} {title}",
+                key=f"nav_{chat_id}",
+                use_container_width=True,
+                type="primary" if is_active else "secondary",
+            ):
+                st.session_state.active_chat_id = chat_id
+                st.session_state.initial_question = None
+                st.session_state.selected_suggestion = None
+                st.rerun()
+    else:
+        st.caption("No history saved yet.")
+
+# --- 4. Persistent Header with Structural Action Row ---
 title_row = st.container(horizontal=True, vertical_alignment="bottom")
 
 # Evaluate conditional runtime interaction states
@@ -76,6 +150,17 @@ def show_disclaimer_dialog():
 
 # --- 4. CONDITIONAL UI: Empty Landing Page View ---
 if not user_first_interaction and not has_message_history:
+    # If no active chat thread is set but there's a background cache, generate a session block dynamically
+    if not st.session_state.active_chat_id:
+        new_id = str(uuid.uuid4())
+        st.session_state.all_chats[new_id] = {
+            "title": "New Conversation",
+            "messages": [],
+            "updated_at": datetime.datetime.now().isoformat(),
+        }
+        st.session_state.active_chat_id = new_id
+        persist_to_browser()
+
     with st.container():
         # Renders chat input centered inside the blank landing page block
         st.chat_input("Ask a question...", key="initial_question")
@@ -83,8 +168,7 @@ if not user_first_interaction and not has_message_history:
         # Display suggestion options as clean selectable pills
         st.pills(
             label="Suggested topics:",
-            options=SUGGESTIONS.keys(),
-            key="selected_suggestion",
+            er
         )
 
     st.button(
@@ -110,9 +194,13 @@ if not user_message:
 with title_row:
 
     def clear_conversation():
-        st.session_state.messages = []
+        # Deletes the active chat from history completely
+        if st.session_state.active_chat_id in st.session_state.all_chats:
+            del st.session_state.all_chats[st.session_state.active_chat_id]
+        st.session_state.active_chat_id = None
         st.session_state.initial_question = None
         st.session_state.selected_suggestion = None
+        persist_to_browser()
 
     st.button(
         "Restart",
@@ -168,6 +256,25 @@ if user_message:
                     st.session_state.messages.append(
                         {"role": "assistant", "content": response_text}
                     )
+
+                    # Dynamic automatic conversation renamed on first response
+                    active_id = st.session_state.active_chat_id
+                    if (
+                        active_id
+                        and st.session_state.all_chats[active_id]["title"]
+                        == "New Conversation"
+                    ):
+                        # Shorten title down nicely for sidebar visibility constraints
+                        clean_title = user_message.replace(r"\$", "$")
+                        if len(clean_title) > 28:
+                            clean_title = clean_title[:25] + "..."
+                        st.session_state.all_chats[active_id]["title"] = clean_title
+
+                    if active_id:
+                        st.session_state.all_chats[active_id]["updated_at"] = (
+                            datetime.datetime.now().isoformat()
+                        )
+                        persist_to_browser()
 
                     # Clear input keys to prevent loop interception bugs on structural reruns
                     st.session_state.initial_question = None
