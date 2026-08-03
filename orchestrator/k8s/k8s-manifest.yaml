@@ -14,7 +14,7 @@ metadata:
     app: api-orchestrator
 data:
   MODEL_NAME: gemma4:26b-a4b-it-qat
-  MODEL_ENDPOINT_BASE_URL: http://192.168.1.207:11434
+  MODEL_ENDPOINT_BASE_URL: http://192.168.1.145:11434
 ---
 apiVersion: v1
 kind: ConfigMap
