@@ -48,15 +48,9 @@ if "messages" not in st.session_state:
 title_row = st.container(horizontal=True, vertical_alignment="bottom")
 
 # Evaluate conditional runtime interaction states
-user_just_asked_initial_question = (
-    "initial_question" in st.session_state and st.session_state.initial_question
-)
-user_just_clicked_suggestion = (
-    "selected_suggestion" in st.session_state and st.session_state.selected_suggestion
-)
-user_first_interaction = (
-    user_just_asked_initial_question or user_just_clicked_suggestion
-)
+user_just_asked_initial_question = bool(st.session_state.get("initial_question"))
+user_just_clicked_suggestion = bool(st.session_state.get("selected_suggestion"))
+user_first_interaction = user_just_asked_initial_question or user_just_clicked_suggestion
 has_message_history = len(st.session_state.messages) > 0
 
 
@@ -97,14 +91,21 @@ if not user_first_interaction and not has_message_history:
 
 # --- 5. CONDITIONAL UI: Active Conversation Thread View ---
 # Render a clean conversational chat input fixed at the bottom of the viewport
-user_message = st.chat_input("Ask a follow-up question...")
+user_message = st.chat_input("Ask a follow-up question...", key="followup_question")
 
-# Capture input when transitioning from the initial landing view
-if not user_message:
-    if user_just_asked_initial_question:
-        user_message = st.session_state.initial_question
-    elif user_just_clicked_suggestion:
-        user_message = SUGGESTIONS[st.session_state.selected_suggestion]
+# Determine user message source: follow-up input takes precedence, then landing page inputs
+if user_message:
+    # User typed in follow-up chat input
+    pass
+elif user_just_asked_initial_question:
+    # User submitted initial question from landing page
+    user_message = st.session_state.initial_question
+elif user_just_clicked_suggestion:
+    # User clicked a suggestion from landing page
+    user_message = SUGGESTIONS[st.session_state.selected_suggestion]
+else:
+    # No user input available
+    user_message = None
 
 # Inject the "Restart" button into the shared persistent title header row
 with title_row:
@@ -157,9 +158,6 @@ if user_message:
                     response_text = data["response"].get(
                         "content", "Error: No response generated."
                     )
-
-                    with st.container():
-                        st.markdown(response_text)
 
                     # Update local state memory to capture successful interactions
                     st.session_state.messages.append(

@@ -28,13 +28,13 @@ ai_coordinator = AutonomousStack(
 
 # Maintain public client API request schema contract
 class ChatMessageSchema(BaseModel):
-    role: str  # "user" or "assitant"
+    role: str  # "user" or "assistant"
     content: str  # Actual text content string
 
 
 class ChatRequest(BaseModel):
     message: str  # New incoming user query
-    # Optional hsitory tracking
+    # Optional history tracking
     history: Optional[List[ChatMessageSchema]] = []
 
 
@@ -71,7 +71,9 @@ async def handle_chat_request(payload: ChatRequest):
         output_text = await ai_coordinator.chat(
             user_message=payload.message, chat_history=formatted_history
         )
-        return {"status": "success", "response": output_text}
+        # Extract content from AIMessage and format response as expected by client
+        response_content = output_text.content if hasattr(output_text, 'content') else str(output_text)
+        return {"status": "success", "response": {"content": response_content}}
 
     except Exception as e:
         logging.error(f"Error handling agent pipeline call: {str(e)}", exc_info=True)
