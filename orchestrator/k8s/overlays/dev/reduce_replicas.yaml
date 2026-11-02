@@ -1,0 +1,9 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-orchestrator
+  namespace: api-orchestrator
+  labels:
+    name: api-orchestrator 
+spec:
+  replicas: 1
