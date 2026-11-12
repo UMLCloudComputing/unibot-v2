@@ -4,4 +4,6 @@ resources:
   - ../../base
   - configmap.yaml
   - metrics.yaml
+patches:
+  - path: temp_patch.yaml
 namePrefix: prod-
