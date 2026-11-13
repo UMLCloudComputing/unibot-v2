@@ -1,77 +1,79 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-    name: unibot-v2
-    namespace: argocd
-    finalizers:
-        - resources-finalizer.argocd.argoproj.io
-    annotations:
-        argocd.argoproj.io/sync-wave: "-10"
-spec: 
-    sourceRepos:
-        - 'https://charts.jetstack.io'
-        - 'https://github.com/UMLCloudComputing/unibot-v2.git'
-        - 'https://github.com/UMLCloudComputing/uml-now-mcp.git'
-        - 'https://github.com/UMLCloudComputing/uml-search-mcp.git'
-        - 'https://zilliztech.github.io/milvus-operator/'
-        - 'https://charts.bitnami.com/bitnami'
-        - 'registry-1.docker.io/bitnamicharts'
-        - 'docker.io/envoyproxy'
-        - 'ghcr.io/UMLCloudComputing'
-        - 'https://prometheus-community.github.io/helm-charts'
-        - 'https://grafana-community.github.io/helm-charts'
-    destinations:
-        - namespace: 'milvus-cluster'
-          server: 'https://kubernetes.default.svc'
-        - namespace: 'argocd'
-          server: 'https://kubernetes.default.svc' 
-        - namespace: 'cert-manager'
-          server: 'https://kubernetes.default.svc' 
-        - namespace: 'milvus-operator'
-          server: 'https://kubernetes.default.svc' 
-        - namespace: 'kube-system'
-          server: 'https://kubernetes.default.svc' 
-        - namespace: 'postgresql'
-          server: 'https://kubernetes.default.svc'
-        - namespace: 'redis'
-          server: 'https://kubernetes.default.svc'
-        - namespace: 'envoy-gateway-operator'
-          server: 'https://kubernetes.default.svc'
-        - namespace: 'cloudflare'
-          server: 'https://kubernetes.default.svc'
-        - namespace: 'mcp'
-          server: 'https://kubernetes.default.svc'
-        - namespace: 'api-orchestrator'
-          server: 'https://kubernetes.default.svc'
-        - namespace: 'streamlit-ui'
-          server: 'https://kubernetes.default.svc'
-        - namespace: 'discord-bot'
-          server: 'https://kubernetes.default.svc'
-        - namespace: 'monitoring'
-          server: 'https://kubernetes.default.svc'
-        - namespace: 'prometheus-stack'
-          server: 'https://kubernetes.default.svc'
-    clusterResourceWhitelist:
-        - group: '*'
-          kind: '*' 
+  name: unibot-v2
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  sourceRepos:
+    - "https://charts.jetstack.io"
+    - "https://github.com/UMLCloudComputing/unibot-v2.git"
+    - "https://github.com/UMLCloudComputing/uml-now-mcp.git"
+    - "https://github.com/UMLCloudComputing/uml-search-mcp.git"
+    - "https://zilliztech.github.io/milvus-operator/"
+    - "https://charts.bitnami.com/bitnami"
+    - "registry-1.docker.io/bitnamicharts"
+    - "docker.io/envoyproxy"
+    - "ghcr.io/UMLCloudComputing"
+    - "https://prometheus-community.github.io/helm-charts"
+    - "https://grafana-community.github.io/helm-charts"
+    - "https://bitnmai-labs.github.io/sealed-secrets"
+  destinations:
+    - namespace: "milvus-cluster"
+      server: "https://kubernetes.default.svc"
+    - namespace: "argocd"
+      server: "https://kubernetes.default.svc"
+    - namespace: "cert-manager"
+      server: "https://kubernetes.default.svc"
+    - namespace: "milvus-operator"
+      server: "https://kubernetes.default.svc"
+    - namespace: "kube-system"
+      server: "https://kubernetes.default.svc"
+    - namespace: "postgresql"
+      server: "https://kubernetes.default.svc"
+    - namespace: "redis"
+      server: "https://kubernetes.default.svc"
+    - namespace: "envoy-gateway-operator"
+      server: "https://kubernetes.default.svc"
+    - namespace: "cloudflare"
+      server: "https://kubernetes.default.svc"
+    - namespace: "mcp"
+      server: "https://kubernetes.default.svc"
+    - namespace: "api-orchestrator"
+      server: "https://kubernetes.default.svc"
+    - namespace: "streamlit-ui"
+      server: "https://kubernetes.default.svc"
+    - namespace: "discord-bot"
+      server: "https://kubernetes.default.svc"
+    - namespace: "monitoring"
+      server: "https://kubernetes.default.svc"
+    - namespace: "prometheus-stack"
+      server: "https://kubernetes.default.svc"
+    - namepsace: "kube-system"
+      server: "https://kubernetes.default.svc"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-    name: unibot-stack
-    namespace: argocd
+  name: unibot-stack
+  namespace: argocd
 spec:
-    project: unibot-v2
-    source:
-        repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
-        targetRevision: HEAD
-        path: argocd/apps
-    destination: 
-        server: https://kubernetes.default.svc
-        namespace: argocd
-    syncPolicy:
-        automated:
-            prune: true
-            selfHeal: true
-            allowEmpty: true
-
+  project: unibot-v2
+  source:
+    repoURL: https://github.com/UMLCloudComputing/unibot-v2.git
+    targetRevision: HEAD
+    path: argocd/apps
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
