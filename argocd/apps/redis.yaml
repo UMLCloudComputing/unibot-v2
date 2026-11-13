@@ -15,7 +15,7 @@ spec:
     repoURL: registry-1.docker.io/bitnamicharts
     targetRevision: 25.3.2
     helm:
-      values:
+      values: |
         primary:
           resources:
             limits:
