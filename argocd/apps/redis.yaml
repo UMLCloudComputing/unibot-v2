@@ -1,0 +1,36 @@
+# Requires Secrets:
+# redis-creds   -> Configure yourself, key should be redis-password. Provides authentiation credntials for redis sessions.
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  project: unibot-v2
+  source:
+    chart: redis
+    repoURL: registry-1.docker.io/bitnamicharts
+    targetRevision: 25.3.2
+    helm:
+      values:
+        primary:
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+          image:
+            tag: sha256-97b20eafbc1e8a63fa244920980aeb81e686232a989a68f5379db73032d0b1a8
+        auth:
+          enabled: false
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: redis
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
